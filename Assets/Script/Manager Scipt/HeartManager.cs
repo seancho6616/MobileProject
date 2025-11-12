@@ -7,7 +7,7 @@ public class PlayerManager : MonoBehaviour
 {
     [Header("Heart")]
     [SerializeField] float maxHealth = 16f; // 현재 최대 목숨
-    [SerializeField] float currentHearlth = 13f; // 현재 목숨
+    [SerializeField] float currentHearlth = 16f; // 현재 목숨
     float maxPositionHearlth = 9f; //게임에서 가질 수 있는 최대 목숨 개수
 
     [Header("UI Setting")]
