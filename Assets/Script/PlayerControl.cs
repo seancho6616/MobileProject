@@ -1,11 +1,17 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerControl : MonoBehaviour
 {
     [Header("Move peed")]
     public float moveSpeed = 5f;
+
+    bool canDash = true;
+    bool canAttack = true;
+    bool canMove = true;
+
     Vector3 movement;
     Rigidbody rigid;
     Animator ani;
@@ -34,7 +40,33 @@ public class PlayerControl : MonoBehaviour
         // 애니메이터에 상태 전달
             ani.SetBool("IsMove", isMoving);    
             Debug.Log($"Move : {input}");
+            
         }
     }
 
+    void OnAttack(){
+        if(!canAttack) return;
+        ani.SetTrigger("Attack1");
+    }
+    IEnumerator OnDash()
+    {   
+        if(!canDash) yield break;
+        (canDash, canMove, canAttack) = (false, false, false);
+        ani.SetTrigger("Dash");
+        Vector3 move;
+        if(movement == Vector3.zero)
+        {
+            move = Vector3.forward *8f;
+        }
+        else
+        {
+            move = movement*5f;
+        }
+        rigid.AddForce(move, ForceMode.Impulse);
+        yield return new WaitForSeconds(0.5f);
+        canMove = true;
+        canAttack = true;        
+        yield return new WaitForSeconds(1.0f);
+        canDash = true;
+    }
 }
