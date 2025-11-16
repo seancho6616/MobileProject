@@ -34,6 +34,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Heal",
+                    "type": "Button",
+                    "id": "88c102f9-89c1-4be8-9bae-2550c868e0d1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Setting",
                     "type": "Button",
                     "id": "1f668f01-6c0c-483d-bccb-bccb0c9f0122",
@@ -162,6 +171,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Setting",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2b428cf3-f113-4757-8b96-539bd8f9d9d5",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Heal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

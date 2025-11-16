@@ -15,13 +15,17 @@ public class PlayerControl : MonoBehaviour
     Vector3 movement;
     Rigidbody rigid;
     Animator ani;
+
+    PlayerStemina playerStemina;
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         ani = GetComponent<Animator>();
+        playerStemina = GetComponent<PlayerStemina>();
     }
     void FixedUpdate()
     {
+        
         Move();
     }
     void Move()
@@ -39,8 +43,6 @@ public class PlayerControl : MonoBehaviour
         
         // 애니메이터에 상태 전달
             ani.SetBool("IsMove", isMoving);    
-            Debug.Log($"Move : {input}");
-            
         }
     }
 
@@ -50,7 +52,8 @@ public class PlayerControl : MonoBehaviour
     }
     IEnumerator OnDash()
     {   
-        if(!canDash) yield break;
+        bool trueFalse = playerStemina.UseStamina(25);
+        if(!canDash || !trueFalse) yield break;
         (canDash, canMove, canAttack) = (false, false, false);
         ani.SetTrigger("Dash");
         Vector3 move;
