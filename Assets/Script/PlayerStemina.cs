@@ -9,6 +9,11 @@ public class PlayerStemina : MonoBehaviour
     [SerializeField] Slider staminaIm;
     
     float maxStamina =100f;
+    public float MaxStamina
+    {
+        get => maxStamina;
+        set => maxStamina += value;
+    }
     public float currentStamina;
     float staminaRegen = 8f;
     float regenTime =1.5f;
@@ -49,7 +54,7 @@ public class PlayerStemina : MonoBehaviour
         return false;
     } 
 
-    void UpdateStamina()
+    public void UpdateStamina()
     {
         if (staminaIm != null)
         {

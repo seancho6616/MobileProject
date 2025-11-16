@@ -11,6 +11,7 @@ public class PlayerControl : MonoBehaviour
     bool canDash = true;
     bool canAttack = true;
     bool canMove = true;
+    
 
     Vector3 movement;
     Rigidbody rigid;
@@ -25,7 +26,6 @@ public class PlayerControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        
         Move();
     }
     void Move()
@@ -35,6 +35,7 @@ public class PlayerControl : MonoBehaviour
     }
     void OnMovement(InputValue value)
     {
+        if(!canMove) return;
         Vector2 input = value.Get<Vector2>();
         if(input != null)
         {
@@ -46,9 +47,14 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    void OnAttack(){
-        if(!canAttack) return;
+    IEnumerator OnAttack(){
+        if(!canAttack) yield break;
+        canMove = false;
+        ani.SetBool("IsMove", false);
+        movement = Vector3.zero;
         ani.SetTrigger("Attack1");
+        yield return new WaitForSeconds(.5f);
+        canMove = true;
     }
     IEnumerator OnDash()
     {   

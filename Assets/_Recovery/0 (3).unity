@@ -535,10 +535,10 @@ MonoBehaviour:
   canvasSetting: {fileID: 932391371}
   canvasPlayer: {fileID: 1339341129}
   canvasInGame: {fileID: 153965879}
-  settingDs: {fileID: 1426615583}
-  programmerDs: {fileID: 850912644}
-  soundDs: {fileID: 701099846}
-  keyDs: {fileID: 776198682}
+  settingDs: {fileID: 0}
+  programmerDs: {fileID: 0}
+  soundDs: {fileID: 0}
+  keyDs: {fileID: 0}
 --- !u!1 &117613187
 GameObject:
   m_ObjectHideFlags: 0
@@ -961,7 +961,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Key
+  m_text: New Text
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1354,13 +1354,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3568874, y: -0, z: -0, w: 0.9341474}
-  m_LocalPosition: {x: 0, y: 8.62, z: -9.1}
+  m_LocalRotation: {x: 0.45888218, y: 0, z: 0, w: 0.8884972}
+  m_LocalPosition: {x: 0, y: 14.8, z: -9.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 41.818, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 54.63, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2833,7 +2833,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 932391369}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -3143,19 +3143,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1092744063}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 116033933}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnKeyGuide
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1092744063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3251,9 +3239,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Sound
-
-'
+  m_text: New Text
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3866,19 +3852,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1292477187}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 116033933}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnProgrammer
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1292477187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4723,19 +4697,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1543781887}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 116033933}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnSetting
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1543781887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4850,7 +4812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeartManager
   maxHealth: 16
-  currentHealth: 16
+  currentHearlth: 16
   heartPrefab: {fileID: 6854739120239944674, guid: 50754816001803b47a4d1fa1a3782f00, type: 3}
   parentUI: {fileID: 1550286456}
 --- !u!1 &1583966042
@@ -5490,19 +5452,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1849894018}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 116033933}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1849894018
 MonoBehaviour:
   m_ObjectHideFlags: 0
