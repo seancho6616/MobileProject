@@ -3936,6 +3936,7 @@ GameObject:
   - component: {fileID: 1284438682}
   - component: {fileID: 1284438684}
   - component: {fileID: 1284438683}
+  - component: {fileID: 1284438685}
   m_Layer: 5
   m_Name: Attack_Image
   m_TagString: Untagged
@@ -4000,6 +4001,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1284438681}
   m_CullTransparentMesh: 1
+--- !u!114 &1284438685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284438681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caaa21a7da508104db26f8b00a7dd02e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AttackImageChanger
+  targetIm: {fileID: 1284438683}
+  newImage: {fileID: 21300000, guid: a8ea191d246ebe4469151905a2cb50fc, type: 3}
 --- !u!1 &1292477184
 GameObject:
   m_ObjectHideFlags: 0
@@ -4437,7 +4452,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1339341124}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
