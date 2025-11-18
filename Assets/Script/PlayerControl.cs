@@ -28,12 +28,12 @@ public class PlayerControl : MonoBehaviour
     {
         Move();
     }
-    void Move()
+    void Move() // 이동
     {
         Vector3 move = rigid.position + movement * moveSpeed * Time.fixedDeltaTime;
         rigid.MovePosition(move);
     }
-    void OnMovement(InputValue value)
+    void OnMovement(InputValue value) // 이동 버튼 입력
     {
         if(!canMove) return;
         Vector2 input = value.Get<Vector2>();
@@ -47,7 +47,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    IEnumerator OnAttack(){
+    IEnumerator OnAttack(){ //공격 버튼 입력
         if(!canAttack) yield break;
         canMove = false;
         ani.SetBool("IsMove", false);
@@ -56,7 +56,7 @@ public class PlayerControl : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         canMove = true;
     }
-    IEnumerator OnDash()
+    IEnumerator OnDash() // 대시 버튼 입력
     {   
         bool trueFalse = playerStemina.UseStamina(25);
         if(!canDash || !trueFalse) yield break;

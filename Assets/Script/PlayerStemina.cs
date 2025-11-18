@@ -31,7 +31,7 @@ public class PlayerStemina : MonoBehaviour
         RegenStamina();
     }
 
-    private void RegenStamina()
+    private void RegenStamina() // 스테미너 리젠
     {
         if (currentStamina < maxStamina && Time.time >= lateUseStamina + regenTime)
         {
@@ -41,7 +41,7 @@ public class PlayerStemina : MonoBehaviour
         }
     }
 
-    public bool UseStamina(float stamina)
+    public bool UseStamina(float stamina) // 스테미너 사용
     {
         if(currentStamina >= stamina)
         {
@@ -54,7 +54,7 @@ public class PlayerStemina : MonoBehaviour
         return false;
     } 
 
-    public void UpdateStamina()
+    public void UpdateStamina() // 현재 스테미나 값 시각화 ui
     {
         if (staminaIm != null)
         {

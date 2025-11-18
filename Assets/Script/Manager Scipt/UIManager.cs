@@ -2,14 +2,16 @@
 
 public class UIManager : MonoBehaviour
 {
-    [Header("canvas")]
-    [SerializeField] CanvasGroup canvasSetting;
-    [SerializeField] CanvasGroup canvasPlayer;
-    [SerializeField] CanvasGroup canvasInGame;
-    [SerializeField] CanvasGroup settingDs;
-    [SerializeField] CanvasGroup programmerDs;
-    [SerializeField] CanvasGroup soundDs;
-    [SerializeField] CanvasGroup keyDs;
+    [Header("canvas")] //메인 게임 ui 설정들
+    [SerializeField] CanvasGroup canvasSetting; //설정들 캔버스
+    [SerializeField] CanvasGroup canvasPlayer; // 플레이어 버튼 관련 캔버스
+    [SerializeField] CanvasGroup canvasInGame; // 플레이어 정보 ui 캠버스
+    
+    [Header("Settings UI")]
+    [SerializeField] CanvasGroup settingDs; //설정 설명 UI
+    [SerializeField] CanvasGroup programmerDs; // 프로그래머 설명 ui
+    [SerializeField] CanvasGroup soundDs; // 사운드 조절 ui
+    [SerializeField] CanvasGroup keyDs; // 키 설명 ui
     void Start()
     {
         canvasSetting.alpha = 0f;
@@ -61,14 +63,14 @@ public class UIManager : MonoBehaviour
         HidCanvas(keyDs);
     }
 
-    void ShowCanvas(CanvasGroup can)
+    void ShowCanvas(CanvasGroup can) // 캔버스 활성화
     {
         can.alpha = 1f;
         can.interactable = true;
         can.blocksRaycasts = true;
     }
 
-    void HidCanvas(CanvasGroup can)
+    void HidCanvas(CanvasGroup can) // 캔버스 비활성화
     {
         can.alpha = 0f;
         can.interactable = false;

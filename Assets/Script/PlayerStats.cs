@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerStats
+public class PlayerStats // 플레이어 정보 데이터 (아직 활용은 안함)
 {
     [Header("Heart")]
     [SerializeField] float maxHealth = 16f; // 현재 최대 목숨
