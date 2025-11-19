@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerStats // 플레이어 정보 데이터 (아직 활용은 안함)
+public class PlayerStats: MonoBehaviour  // 플레이어 정보 데이터 (아직 활용은 안함)
 {
     [Header("Heart")]
     [SerializeField] float maxHealth = 16f; // 현재 최대 목숨
@@ -29,6 +29,9 @@ public class PlayerStats // 플레이어 정보 데이터 (아직 활용은 안�
         get => currentStamina;
         set => currentStamina = value;
     }
-    float staminaRegen = 8f;
-    float regenTime =1.5f;
+    
+    [Header("Coin & Potion count")]
+    public int CoinCount{get;set;}
+    public int PotionCount{get; set;}
+
 }
