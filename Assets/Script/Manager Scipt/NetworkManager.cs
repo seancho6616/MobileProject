@@ -147,6 +147,7 @@ public class NetworkManager : MonoBehaviour
 
             if (req.result == UnityWebRequest.Result.Success)
             {
+                Debug.Log("서버에서 받은 원본 데이터: " + req.downloadHandler.text);
                 Debug.Log("데이터 로드 성공");
                 // JSON -> C# 객체 변환
                 GameData data = JsonUtility.FromJson<GameData>(req.downloadHandler.text);

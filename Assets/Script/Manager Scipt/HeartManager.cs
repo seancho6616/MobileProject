@@ -73,8 +73,8 @@ public class HeartManager : MonoBehaviour // 목숨 관련 코드
 
     public void SetHealthDirectly(int current, int max)
     {
-        currentHealth = (float)current; // int 값을 float로 변환해서 대입
+        currentHealth = (float)current; 
         maxHealth = (float)max;
-        UpdateHealth(); // UI 즉시 갱신
+        UpdateHealth();
     }
 }
