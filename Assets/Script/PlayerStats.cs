@@ -34,4 +34,6 @@ public class PlayerStats: MonoBehaviour  // 플레이어 정보 데이터 (아�
     public int CoinCount{get;set;}
     public int PotionCount{get; set;}
 
+    public ParticleSystem healParticle;
+
 }
