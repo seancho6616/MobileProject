@@ -132,6 +132,7 @@ public class PlayerControl : MonoBehaviour
         int count = playerStats.PotionCount;
         if(count == 0) yield break;
         (canDash, canMove, canAttack) = (false, false, false);
+        playerStats.healParticle.Play();
         heartManager.CurrentHealth = 4f;
         count = playerStats.PotionCount -= 1;
         textUI.CountPotion(count);
