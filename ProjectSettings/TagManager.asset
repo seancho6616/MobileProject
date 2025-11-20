@@ -9,6 +9,7 @@ TagManager:
   - Stamina
   - Heart
   - DisHeart
+  - Weapon
   layers:
   - Default
   - TransparentFX
