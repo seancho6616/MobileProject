@@ -8,7 +8,7 @@ public class Manager : MonoBehaviour
     public GameObject player;           // 위치
     
     [Header("UI")]
-    public TextUI textUI;               // ★ 새로 추가! (UI 담당)
+    public TextUI textUI;
 
     void Start()
     {
@@ -62,7 +62,6 @@ public class Manager : MonoBehaviour
                 playerManager.attackRange = loadedData.attackRange;
                 playerManager.equippedWeaponId = loadedData.equippedWeaponId;
                 
-                // ▼▼▼ [UI 업데이트 명령 추가!] ▼▼▼
                 if (textUI != null)
                 {
                     textUI.CountCoin(playerManager.coins);      // 코인 텍스트 갱신
@@ -73,7 +72,6 @@ public class Manager : MonoBehaviour
                 {
                     Debug.LogError("TextUI가 연결되지 않았습니다!");
                 }
-                // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
             }
 
             // 2. 위치 적용
