@@ -6406,10 +6406,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 5664722236981463771, guid: 7e0548d4d007ba343876816d262e5b47, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 789095518}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6331065435210947150, guid: 7e0548d4d007ba343876816d262e5b47, type: 3}
       insertIndex: -1
@@ -6418,6 +6415,48 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4202685282041049116}
   m_SourcePrefab: {fileID: 100100000, guid: 7e0548d4d007ba343876816d262e5b47, type: 3}
+--- !u!1 &4202685282041049115 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6331065435210947150, guid: 7e0548d4d007ba343876816d262e5b47, type: 3}
+  m_PrefabInstance: {fileID: 4202685282041049114}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4202685282041049116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4202685282041049115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76e9ca55aa3c2664787c378591af09e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeartManager
+  maxHealth: 16
+  currentHealth: 0
+  heartPrefab: {fileID: 0}
+  parentUI: {fileID: 0}
+--- !u!114 &4202685282041049117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4202685282041049115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3a1dea8238fcd543baff6f827937d81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
+  coins: 0
+  potionCount: 0
+  maxStamina: 100
+  currentStamina: 100
+  speed: 10
+  baseAttack: 0
+  baseAttackSpeed: 1
+  attackRange: 10
+  equippedWeaponId: 0
 --- !u!1001 &7091363075648738058
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6475,48 +6514,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecb3d67ebe1931349a32eaef6501db88, type: 3}
---- !u!1 &4202685282041049115 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6331065435210947150, guid: 7e0548d4d007ba343876816d262e5b47, type: 3}
-  m_PrefabInstance: {fileID: 4202685282041049114}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4202685282041049116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4202685282041049115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76e9ca55aa3c2664787c378591af09e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HeartManager
-  maxHealth: 16
-  currentHealth: 0
-  heartPrefab: {fileID: 0}
-  parentUI: {fileID: 0}
---- !u!114 &4202685282041049117
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4202685282041049115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3a1dea8238fcd543baff6f827937d81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
-  coins: 0
-  potionCount: 0
-  maxStamina: 100
-  currentStamina: 100
-  speed: 10
-  baseAttack: 0
-  baseAttackSpeed: 1
-  attackRange: 10
-  equippedWeaponId: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
