@@ -6330,6 +6330,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2085257670856982443, guid: ecb3d67ebe1931349a32eaef6501db88, type: 3}
+      propertyPath: attackRange
+      value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085257670856982443, guid: ecb3d67ebe1931349a32eaef6501db88, type: 3}
+      propertyPath: attackSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7008211073594747076, guid: ecb3d67ebe1931349a32eaef6501db88, type: 3}
+      propertyPath: m_Radius
+      value: 16.62
+      objectReference: {fileID: 0}
     - target: {fileID: 7309259299606051540, guid: ecb3d67ebe1931349a32eaef6501db88, type: 3}
       propertyPath: m_Name
       value: Slime_Monstor1
