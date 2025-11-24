@@ -8,7 +8,7 @@ public class NetworkManager : MonoBehaviour
     public static NetworkManager Instance; 
 
     // 서버 주소 - 로컬 테스트
-    private string baseUrl = "http://localhost:3000/api"; 
+    private string baseUrl = "https://10.20.33.14/api"; 
     
     // 로그인 발급 토큰
     public string authToken; 
