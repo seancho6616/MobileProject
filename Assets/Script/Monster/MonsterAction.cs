@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Android.Gradle;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +10,15 @@ public class MonsterController : MonoBehaviour
     public float maxHealth = 10f;
     public float moveSpeed = 5f;
     public float attackDamage = 4f;
-    public float attackSpeed = 1f;
+    public float attackSpeed = 3f;
     public float detectionRange = 10f;
-    public float attackRange = 2f;
+    public float attackRange = 4f;
 
     // 현재 상태
-    float currentHealth;
-    Animator animator;
+    private float currentHealth;
+    private Animator animator;
     private Transform player;
-    bool isPlayerInRange = false; // 플레이어가 범위 안에 있는지
+    private bool isPlayerInRange = false; // 플레이어가 범위 안에 있는지
     
     public enum MonsterState
     {
@@ -33,15 +34,12 @@ public class MonsterController : MonoBehaviour
     private float attackTimer;
     private float idleTimer;
     private Vector3 patrolPoint;
-    SphereCollider sphereCollider;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         currentState = MonsterState.Idle;
-        sphereCollider = GetComponent<SphereCollider>();
-        sphereCollider.radius = detectionRange*2;
     }
 
     // 플레이어가 감지 범위에 들어옴
@@ -56,7 +54,7 @@ public class MonsterController : MonoBehaviour
             if (currentState == MonsterState.Idle || currentState == MonsterState.Patrol)
             {
                 currentState = MonsterState.Chase;
-                animator.SetBool("IsMove", true);
+                animator.SetBool("IsMoving", true);
             }
         }
     }
@@ -73,7 +71,7 @@ public class MonsterController : MonoBehaviour
             if (currentState == MonsterState.Chase)
             {
                 currentState = MonsterState.Idle;
-                animator.SetBool("IsMove", false);
+                animator.SetBool("IsMoving", false);
             }
         }
     }
@@ -108,7 +106,7 @@ public class MonsterController : MonoBehaviour
         {
             currentState = MonsterState.Patrol;
             SetRandomPatrolPoint();
-            animator.SetBool("IsMove", true);
+            animator.SetBool("IsMoving", true);
             idleTimer = 0f;
         }
     }
@@ -116,7 +114,7 @@ public class MonsterController : MonoBehaviour
     // Patrol 상태 - 랜덤하게 돌아다님
     void UpdatePatrol()
     {
-        animator.SetBool("IsMove", true);
+        animator.SetBool("IsMoving", true);
 
         // 목표 지점으로 이동
         MoveTowards(patrolPoint);
@@ -125,7 +123,7 @@ public class MonsterController : MonoBehaviour
         if (Vector3.Distance(transform.position, patrolPoint) < 0.5f)
         {
             currentState = MonsterState.Idle;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             idleTimer = 0f;
         }
     }
@@ -137,7 +135,7 @@ public class MonsterController : MonoBehaviour
         if (player == null || !isPlayerInRange)
         {
             currentState = MonsterState.Idle;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             return;
         }
 
@@ -147,7 +145,7 @@ public class MonsterController : MonoBehaviour
         if (distance < attackRange)
         {
             currentState = MonsterState.Attack;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             return;
         }
 
@@ -161,7 +159,7 @@ public class MonsterController : MonoBehaviour
         if (player == null || !isPlayerInRange)
         {
             currentState = MonsterState.Idle;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             return;
         }
 
@@ -171,7 +169,7 @@ public class MonsterController : MonoBehaviour
         if (distance > attackRange)
         {
             currentState = MonsterState.Chase;
-            animator.SetBool("IsMove", true);
+            animator.SetBool("IsMoving", true);
             return;
         }
 
