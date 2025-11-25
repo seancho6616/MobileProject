@@ -6,9 +6,6 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour
 {
     public GameObject Item;
-    [Header("Move peed")]
-    public float moveSpeed = 5f;
-
     bool canDash = true;
     bool canAttack = true;
     bool canMove = true;
@@ -43,9 +40,10 @@ public class PlayerControl : MonoBehaviour
     {
         Move();
     }
-    void Move() // 이동
+    void Move()
     {
-        Vector3 move = rigid.position + movement * moveSpeed * Time.fixedDeltaTime;
+        if (playerStats == null) return;
+        Vector3 move = rigid.position + movement * playerStats.MoveSpeed * Time.fixedDeltaTime;
         rigid.MovePosition(move);
     }
     void OnMovement(InputValue value) // 이동 버튼 입력
@@ -67,11 +65,15 @@ public class PlayerControl : MonoBehaviour
         if(!canAttack) yield break;
         canMove = false;
         ani.SetBool("IsMove", false);
+
         if (pickupHeart)
         {
             movement = Vector3.zero;
             ani.SetTrigger("Action");
-            playerStats.MaxHealth =4f;
+            
+            playerStats.MaxHealth += 4f;
+            playerStats.CurrentHealth += 4f;
+            
             heartManager.MakeSameHeart();
             pickupHeart = false;
             attackImageChanger.BeforeChangeSprite();
@@ -80,12 +82,13 @@ public class PlayerControl : MonoBehaviour
         else if (pickupStamina)
         {
             movement = Vector3.zero;
-
             ani.SetTrigger("Action");
-            if(playerStemina.MaxStamina > playerStemina.currentStamina)
+            
+            // playerStats 데이터 직접 사용
+            if(playerStats.MaxStamina > playerStats.CurrentStamina)
             {
-                playerStemina.currentStamina += 25f;
-                playerStemina.MaxStamina = 25f;    
+                playerStats.CurrentStamina += 25f;
+                playerStats.MaxStamina = 25f;    
                 playerStemina.UpdateStamina();
             }
             pickupStamina = false;
@@ -95,15 +98,15 @@ public class PlayerControl : MonoBehaviour
         else if (pickupPotion)
         {
             movement = Vector3.zero;
-
             ani.SetTrigger("Action");
-            int count = playerStats.PotionCount += 1;
+            playerStats.PotionCount += 1;
+            int count = playerStats.PotionCount;
+
             textUI.CountPotion(count);
             pickupPotion = false;
             attackImageChanger.BeforeChangeSprite();
             Destroy(Item);
-        }
-        else if(canAttack)
+        }else if(canAttack)
         {
             movement = Vector3.zero;
             ani.SetTrigger("Attack1");
@@ -140,7 +143,8 @@ public class PlayerControl : MonoBehaviour
         if(count == 0) yield break;
         (canDash, canMove, canAttack) = (false, false, false);
         playerStats.healParticle.Play();
-        playerStats.CurrentHealth = 4f;
+
+        playerStats.CurrentHealth += 4f;
         count = playerStats.PotionCount -= 1;
         textUI.CountPotion(count);
         yield return new WaitForSeconds(1.0f);
@@ -151,7 +155,7 @@ public class PlayerControl : MonoBehaviour
     Color basicColor = new Color(182f,169f,163f,255f);
     public void Damaged(float value)
     {
-        playerStats.CurrentHealth = -value;
+        playerStats.CurrentHealth -= value;
         // ChangeColor(damageColor);
         //yield return new WaitForSeconds(.1f);
         // ChangeColor(basicColor);
@@ -165,8 +169,6 @@ public class PlayerControl : MonoBehaviour
             renderer.material.color = newColor;
         }
     }
-
-
     public void MakeFalse()
     {
         pickupDisHeart = false;

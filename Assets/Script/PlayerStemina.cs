@@ -7,23 +7,25 @@ public class PlayerStemina : MonoBehaviour
 
     [Header("Stamina Image")]
     [SerializeField] Slider staminaIm;
+
+    PlayerStats playerStats;
     
-    float maxStamina =100f;
-    public float MaxStamina
-    {
-        get => maxStamina;
-        set => maxStamina += value;
-    }
-    public float currentStamina;
     float staminaRegen = 8f;
     float regenTime =1.5f;
     float lateUseStamina;
 
+
+    void Awake()
+    {
+        // PlayerStats 컴포넌트 찾아오기
+        playerStats = GetComponent<PlayerStats>();
     
+    }
+
 
     void Start()
     {
-        currentStamina = maxStamina;
+        // palyerStats에 있는 데이터 불러옴
         UpdateStamina();
     }
     void Update()
@@ -33,21 +35,28 @@ public class PlayerStemina : MonoBehaviour
 
     private void RegenStamina() // 스테미너 리젠
     {
-        if (currentStamina < maxStamina && Time.time >= lateUseStamina + regenTime)
+        if (playerStats.CurrentStamina < playerStats.MaxStamina && Time.time >= lateUseStamina + regenTime)
         {
-            currentStamina += staminaRegen * Time.deltaTime; // 회복
-            currentStamina = Mathf.Min(currentStamina, maxStamina); // 최대치를 넘지 않게 함
+            // 스태미너 회복
+            playerStats.CurrentStamina += staminaRegen * Time.deltaTime;
+            
+            // max 안넘게 고정
+            if (playerStats.CurrentStamina > playerStats.MaxStamina)
+            {
+                playerStats.CurrentStamina = playerStats.MaxStamina;
+            }
+
             UpdateStamina();
         }
     }
 
     public bool UseStamina(float stamina) // 스테미너 사용
     {
-        if(currentStamina >= stamina)
+        if(playerStats.CurrentStamina >= stamina)
         {
-            currentStamina -= stamina;
+            playerStats.CurrentStamina -= stamina;
             lateUseStamina = Time.time;
-            Debug.Log(lateUseStamina);
+            
             UpdateStamina();
             return true;
         }
@@ -56,9 +65,13 @@ public class PlayerStemina : MonoBehaviour
 
     public void UpdateStamina() // 현재 스테미나 값 시각화 ui
     {
-        if (staminaIm != null)
+        if (staminaIm != null && playerStats != null)
         {
-            staminaIm.value = currentStamina / maxStamina;
+            // 0으로 나누기 방지
+            if (playerStats.MaxStamina > 0)
+            {
+                staminaIm.value = playerStats.CurrentStamina / playerStats.MaxStamina;
+            }
         }
     }
 }
