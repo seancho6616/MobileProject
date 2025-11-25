@@ -5,6 +5,7 @@ using System.Collections;
 
 public class MonsterAI : MonoBehaviour
 {
+    float health = 10f;
     [Header("Movement Settings")]
     [SerializeField] private float wanderRadius = 10f;
     [SerializeField] private float wanderTimer = 5f;
@@ -29,6 +30,7 @@ public class MonsterAI : MonoBehaviour
     bool isAttacking = false;
     Animator animator;
     PlayerControl playerControl;
+    Renderer monsterRenderer;
     
     private enum State
     {
@@ -44,6 +46,7 @@ public class MonsterAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         playerControl = FindAnyObjectByType<PlayerControl>();
         animator = GetComponent<Animator>();
+        monsterRenderer = GetComponent<Renderer>();
         wanderTimerCurrent = wanderTimer;
         attackTimerCurrent = 0f;
         
@@ -196,6 +199,13 @@ public class MonsterAI : MonoBehaviour
         {
             currentState = State.Wandering;
         }
+    }
+
+    public void Damaged(float value)
+    {
+        health -= value;
+        monsterRenderer.material.color = Color.red;
+
     }
     
     Vector3 RandomNavSphere(Vector3 origin, float dist)

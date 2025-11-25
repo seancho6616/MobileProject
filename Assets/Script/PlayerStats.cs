@@ -9,7 +9,7 @@ public class PlayerStats: MonoBehaviour  // 플레이어 정보 데이터 (아�
         get => maxHealth;
         set => maxHealth += value;
     }
-    [SerializeField] float currentHealth = 16f; // 현재 목숨
+    [SerializeField] float currentHealth; // 현재 목숨
     public float CurrentHealth
     {
         get => currentHealth;
@@ -33,6 +33,9 @@ public class PlayerStats: MonoBehaviour  // 플레이어 정보 데이터 (아�
     [Header("Coin & Potion count")]
     public int CoinCount{get;set;}
     public int PotionCount{get; set;}
+
+    public float attackDamage{get; set;}
+    public float attackRange{get; set;}
 
     public ParticleSystem healParticle;
 
