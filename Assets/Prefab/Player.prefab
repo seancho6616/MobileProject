@@ -122,7 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 483690508583263245}
   m_Layer: 6
-  m_Name: GameObject
+  m_Name: Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5047,8 +5047,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76e9ca55aa3c2664787c378591af09e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeartManager
-  maxHealth: 16
-  currentHealth: 0
   heartPrefab: {fileID: 0}
   parentUI: {fileID: 0}
 --- !u!1001 &3353733518433936777
@@ -5687,8 +5685,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76e9ca55aa3c2664787c378591af09e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeartManager
-  maxHealth: 16
-  currentHealth: 10
   heartPrefab: {fileID: 6854739120239944674, guid: 50754816001803b47a4d1fa1a3782f00, type: 3}
   parentUI: {fileID: 0}
 --- !u!114 &2449056215844562404
@@ -5704,7 +5700,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   maxHealth: 16
-  currentHealth: 16
+  currentHealth: 0
   healParticle: {fileID: 8416466392008066239}
 --- !u!4 &5664722236981463771 stripped
 Transform:

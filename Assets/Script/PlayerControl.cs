@@ -18,23 +18,27 @@ public class PlayerControl : MonoBehaviour
     Vector3 movement;
     Rigidbody rigid;
     Animator ani;
+    TextUI textUI;
+    Renderer[] partsRenderers;
+
+    MonsterAI monsterAI;
     PlayerStemina playerStemina;
     HeartManager heartManager;
     PlayerStats playerStats;
-    TextUI textUI;
     AttackImageChanger attackImageChanger;
-    Renderer[] partsRenderers;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         ani = GetComponent<Animator>();
+        textUI = FindAnyObjectByType<TextUI>();
+        partsRenderers = GetComponentsInChildren<Renderer>(true);
+
+        monsterAI = FindAnyObjectByType<MonsterAI>();
         playerStemina = GetComponent<PlayerStemina>();
         heartManager = GetComponent<HeartManager>();
         playerStats = GetComponent<PlayerStats>();
-        textUI = FindAnyObjectByType<TextUI>();
         attackImageChanger = FindAnyObjectByType<AttackImageChanger>();
-        partsRenderers = GetComponentsInChildren<Renderer>(true);
     }
     void FixedUpdate()
     {
@@ -108,8 +112,7 @@ public class PlayerControl : MonoBehaviour
             Destroy(Item);
         }else if(canAttack)
         {
-            movement = Vector3.zero;
-            ani.SetTrigger("Attack1");
+            AttackMonster();
         }
         yield return new WaitForSeconds(.5f);
         canMove = true;
@@ -162,6 +165,16 @@ public class PlayerControl : MonoBehaviour
         // yield break;
     }
 
+    public void AttackMonster()
+    {
+        movement = Vector3.zero;
+        ani.SetTrigger("Attack1");
+        if (isMonster)
+        {
+            monsterAI.Damaged(4f);
+        }
+    }
+
     void ChangeColor(Color newColor)
     {
         foreach (Renderer renderer in partsRenderers)
@@ -169,6 +182,21 @@ public class PlayerControl : MonoBehaviour
             renderer.material.color = newColor;
         }
     }
+    bool isMonster = false;
+    void MonsterCheck()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, transform.forward, out hit, playerStats.attackRange))
+        {
+            if (hit.collider.tag.Equals("Monster"))
+            {
+                isMonster = true;
+            }
+            else {isMonster = false;}
+        }
+    }
+
+
     public void MakeFalse()
     {
         pickupDisHeart = false;
