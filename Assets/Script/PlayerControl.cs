@@ -112,6 +112,7 @@ public class PlayerControl : MonoBehaviour
             Destroy(Item);
         }else if(canAttack)
         {
+            MonsterCheck();
             AttackMonster();
         }
         yield return new WaitForSeconds(.5f);
@@ -195,7 +196,7 @@ public class PlayerControl : MonoBehaviour
             else {isMonster = false;}
         }
     }
-
+    
 
     public void MakeFalse()
     {
