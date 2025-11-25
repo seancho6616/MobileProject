@@ -71,7 +71,7 @@ public class Manager : MonoBehaviour
         data.attackRange = playerManager.attackRange;
         data.equippedWeaponId = playerManager.equippedWeaponId;
 
-        // 서버로 전송 (NetworkManager 사용)
+        // 데이터를 서버로 전송함
         StartCoroutine(NetworkManager.Instance.SaveGameData(data));
     }
 

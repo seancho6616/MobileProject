@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// [역할] 씬 이동(StartScene -> MainScene) 간에 데이터를 배달해주는 택배 트럭입니다.
+// 씬 이동 간 데이터 전달 해줌
 public class GameDataStore : MonoBehaviour
 {
     public static GameDataStore Instance;

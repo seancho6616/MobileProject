@@ -2,96 +2,57 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Text;
+using System;
 
 public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager Instance; 
 
-    // 씬이 바뀔 때 데이터 들고있기
+    [Header("Data Cache")]
     public GameData cachedData; 
     public bool isContinue = false;
 
-    // 서버 주소 - 로컬 테스트
-    private string baseUrl = "https://10.20.33.14/api"; 
-    
-    // 로그인 발급 토큰
+    [Header("Network Settings")]
+    private string baseUrl = "http://localhost:3000/api"; 
     public string authToken; 
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); 
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
+        else { Destroy(gameObject); }
     }
 
-        // 회원가입
-    public IEnumerator Register(string username, string password, string nickname, System.Action<bool> onResult)
+    //1. 핵심 기능
+
+    public IEnumerator Register(string username, string password, string nickname, Action<bool> onResult)
     {
-        UserRegisterData registerData = new UserRegisterData { username = username, password = password, nickname = nickname };
-        string json = JsonUtility.ToJson(registerData);
-
-        using (UnityWebRequest req = new UnityWebRequest(baseUrl + "/register", "POST"))
-        {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            req.downloadHandler = new DownloadHandlerBuffer();
-            req.SetRequestHeader("Content-Type", "application/json");
-
-            yield return req.SendWebRequest();
-
-            if (req.result == UnityWebRequest.Result.Success)
-            {
-                Debug.Log("회원가입 성공");
-                onResult?.Invoke(true);
-            }
-            else
-            {
-                Debug.LogError("회원가입 실패: " + req.downloadHandler.text);
-                onResult?.Invoke(false);
-            }
-        }
+        var data = new UserRegisterData { username = username, password = password, nickname = nickname };
+        yield return SendRequest("/register", "POST", data, (json) => {
+            Debug.Log("회원가입 성공");
+            onResult?.Invoke(true);
+        }, () => onResult?.Invoke(false));
     }
 
-    // 로그인
-    public IEnumerator Login(string username, string password, System.Action<bool> onResult)
+    public IEnumerator Login(string username, string password, Action<bool> onResult)
     {
-        UserLoginData loginData = new UserLoginData { username = username, password = password };
-        string json = JsonUtility.ToJson(loginData);
-
-        using (UnityWebRequest req = new UnityWebRequest(baseUrl + "/login", "POST"))
-        {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            req.downloadHandler = new DownloadHandlerBuffer();
-            req.SetRequestHeader("Content-Type", "application/json");
-
-            yield return req.SendWebRequest();
-
-            if (req.result == UnityWebRequest.Result.Success)
-            {
-                var response = JsonUtility.FromJson<LoginResponse>(req.downloadHandler.text);
-                this.authToken = response.token; // 토큰 저장
-                Debug.Log("로그인 성공");
-                onResult?.Invoke(true);
-            }
-            else
-            {
-                Debug.LogError("로그인 실패: " + req.downloadHandler.text);
-                onResult?.Invoke(false);
-            }
-        }
+        var data = new UserLoginData { username = username, password = password };
+        yield return SendRequest("/login", "POST", data, (json) => {
+            var res = JsonUtility.FromJson<LoginResponse>(json);
+            this.authToken = res.token; // 토큰 저장
+            Debug.Log("로그인 성공");
+            onResult?.Invoke(true);
+        }, () => onResult?.Invoke(false));
     }
 
-    // 데이터 저장
     public IEnumerator SaveGameData(GameData data)
     {
-        if (string.IsNullOrEmpty(authToken)) yield break;
+        Debug.Log("--- 2. [네트워크] 서버에 PATCH 요청 시작 ---");
+        if (string.IsNullOrEmpty(authToken))
+        {
+            Debug.LogError("[SAVE] 저장 실패: AuthToken이 없습니다. 로그인 상태를 확인하세요.");
+            yield break;
+        }
+        Debug.Log("[SAVE] AuthToken 확인 완료. 서버에 데이터 전송 시작...");
 
         string json = JsonUtility.ToJson(data);
         
@@ -106,37 +67,63 @@ public class NetworkManager : MonoBehaviour
             yield return req.SendWebRequest();
 
             if (req.result == UnityWebRequest.Result.Success)
-                Debug.Log("게임 데이터 저장 완료!");
+            {
+                Debug.Log("게임 데이터 저장 완료");
+            }
             else
+            {
                 Debug.LogError("저장 실패: " + req.downloadHandler.text);
+            }
         }
     }
 
-    // 데이터 불러오기
-    public IEnumerator LoadGameData(System.Action<GameData> onDataLoaded)
+    public IEnumerator LoadGameData(Action<GameData> onDataLoaded)
     {
-        if (string.IsNullOrEmpty(authToken)) yield break;
+        if (string.IsNullOrEmpty(authToken)) { onDataLoaded?.Invoke(null); yield break; }
+        yield return SendRequest("/my-data", "GET", null, (json) => {
+            var data = JsonUtility.FromJson<GameData>(json);
+            onDataLoaded?.Invoke(data);
+        }, () => onDataLoaded?.Invoke(null));
+    }
 
-        using (UnityWebRequest req = UnityWebRequest.Get(baseUrl + "/my-data"))
+    // 2. 통신 도우미
+    
+    private IEnumerator SendRequest(string path, string method, object data, Action<string> onSuccess, Action onFail = null)
+    {
+        string url = baseUrl + path;
+        string json = data != null ? JsonUtility.ToJson(data) : null;
+
+        using (UnityWebRequest req = new UnityWebRequest(url, method))
         {
-            req.SetRequestHeader("Authorization", "Bearer " + authToken);
+            if (json != null)
+            {
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+                req.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            }
+            req.downloadHandler = new DownloadHandlerBuffer();
+            req.SetRequestHeader("Content-Type", "application/json");
+            
+            if (!string.IsNullOrEmpty(authToken))
+                req.SetRequestHeader("Authorization", "Bearer " + authToken);
+
             yield return req.SendWebRequest();
 
             if (req.result == UnityWebRequest.Result.Success)
             {
-                // JSON -> C# 객체 변환
-                GameData data = JsonUtility.FromJson<GameData>(req.downloadHandler.text);
-                onDataLoaded?.Invoke(data);
+                onSuccess?.Invoke(req.downloadHandler.text);
             }
             else
             {
-                Debug.LogError("로드 실패: " + req.error);
-                onDataLoaded?.Invoke(null);
+                Debug.LogError($"[{method}] {path} 실패: {req.error} / {req.downloadHandler.text}");
+                onFail?.Invoke();
             }
         }
     }
-}
 
-    [System.Serializable] class UserLoginData { public string username; public string password; }
-    [System.Serializable] class UserRegisterData { public string username; public string password; public string nickname; }
-    [System.Serializable] class LoginResponse { public string message; public string token; }
+    
+
+    // 데이터 클래스들
+    [Serializable] class UserLoginData { public string username; public string password; }
+    [Serializable] class UserRegisterData { public string username; public string password; public string nickname; }
+    [Serializable] class LoginResponse { public string message; public string token; }
+}

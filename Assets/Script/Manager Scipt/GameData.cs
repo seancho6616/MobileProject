@@ -3,7 +3,7 @@ using System;
 public class GameData
 {
     public string lastScene;
-    public PositionData position; // x, y, z 좌표
+    public PositionData position; // 위치 - x, y, z 좌표
 
     public int coins;
     public int potionCount;
@@ -20,7 +20,7 @@ public class GameData
     public int equippedWeaponId; // 무기는 ID만 저장
 }
 
-// 좌표 저장을 위한 보조 클래스
+// 좌표 저장
 [Serializable]
 public class PositionData
 {

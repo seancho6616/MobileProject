@@ -18,12 +18,12 @@ public class Item : MonoBehaviour
                 {
                     case ItemType.Coin:
                         playerStat.GetCoin(value); // PlayerManager의 코인 증가 함수 호출
-                        Debug.Log("코인 획득! 현재 개수: " + playerStat.coins);
+                        Debug.Log("코인 획득, 현재 개수: " + playerStat.coins);
                         break;
 
                     case ItemType.Potion:
                         playerStat.GetPotion(value); // PlayerManager의 포션 증가 함수 호출
-                        Debug.Log("포션 획득! 현재 개수: " + playerStat.potionCount);
+                        Debug.Log("포션 획득, 현재 개수: " + playerStat.potionCount);
                         break;
                     
                     // 다른 아이템 추가

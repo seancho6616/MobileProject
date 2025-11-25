@@ -76,7 +76,6 @@ public class HeartManager : MonoBehaviour
                 container.SetActive(true);
                 float fillValue = Mathf.Clamp(healthToFill, 0, heartPerContainer);
                 
-                // HeartUI에 SetFill 함수가 있다고 가정
                 container.SetFill(fillValue / heartPerContainer);
                 
                 healthToFill -= fillValue;
