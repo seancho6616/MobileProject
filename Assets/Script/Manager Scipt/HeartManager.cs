@@ -1,62 +1,84 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HeartManager : MonoBehaviour // 목숨 관련 코드
+public class HeartManager : MonoBehaviour
 {
     [Header("Heart")]
     [SerializeField] float maxHealth = 16f; // 현재 최대 목숨
-    public float MaxHealth // 이 변수를 활용해서 maxHealth 값을 수정 및 활용
+    public float MaxHealth
     {
         get => maxHealth;
         set => maxHealth += value;
     }
+    
     [SerializeField] float currentHealth; // 현재 목숨
-    public float CurrentHealth // 이 변수를 활용해서 currentHealth 값을 수정 및 활용
+    public float CurrentHealth
     {
         get => currentHealth;
         set => currentHealth += value;
     }
-    float maxPositionHearlth = 9f; //게임에서 가질 수 있는 최대 목숨 개수
+    
+    float maxPositionHealth = 9f;
 
     [Header("UI Setting")]
     [SerializeField] HeartUI heartPrefab;
     [SerializeField] Transform parentUI;
 
-    private float heartPerContainer = 4f; //목숨 한개에 칸수
+    private float heartPerContainer = 4f; // 목숨 한개에 칸수
 
     private List<HeartUI> healthContainerPool = new List<HeartUI>();
+    
+    private bool isDataLoaded = false;
+
+    void Awake()
+    {
+        for (int i = 0; i < maxPositionHealth; i++)
+        {
+            if (heartPrefab != null && parentUI != null)
+            {
+                HeartUI container = Instantiate(heartPrefab, parentUI);
+                container.SetActive(false); 
+                healthContainerPool.Add(container);
+            }
+        }
+    }
 
     void Start()
     {
-        MakeSameHeart();
-        for (int i = 0; i < maxPositionHearlth; i++)
+        // 데이터를 서버에서 불러오면 초기화 X
+        if (!isDataLoaded)
         {
-            HeartUI container = Instantiate(heartPrefab, parentUI);
-            container.SetActive(false); // 4. 스크립트의 함수로 끄기
-            healthContainerPool.Add(container); // 풀에 추가
+            MakeSameHeart();
         }
+        
         UpdateHealth();
     }
+    
     void Update()
-        {
-            UpdateHealth();
-        }
+    {
+        UpdateHealth();
+    }
     
     void UpdateHealth() // 현재 목숨 개수의 맞게 ui 설정
     {
+        if (healthContainerPool.Count == 0) return;
+
         int requiredContainers = Mathf.CeilToInt((float)maxHealth / heartPerContainer);
         float healthToFill = currentHealth;
 
         for (int i = 0; i < healthContainerPool.Count; i++)
         {
             HeartUI container = healthContainerPool[i];
+            
             if (i < requiredContainers)
             {
                 container.SetActive(true);
                 float fillValue = Mathf.Clamp(healthToFill, 0, heartPerContainer);
+                
+                // HeartUI에 SetFill 함수가 있다고 가정
                 container.SetFill(fillValue / heartPerContainer);
+                
                 healthToFill -= fillValue;
             }
             else
@@ -71,10 +93,14 @@ public class HeartManager : MonoBehaviour // 목숨 관련 코드
         currentHealth = maxHealth;
     }
 
+    // Manager.cs에서 호출하는 함수
     public void SetHealthDirectly(int current, int max)
     {
-        currentHealth = (float)current; // int 값을 float로 변환해서 대입
+        currentHealth = (float)current; 
         maxHealth = (float)max;
-        UpdateHealth(); // UI 즉시 갱신
+        
+        isDataLoaded = true; 
+        
+        UpdateHealth();
     }
 }

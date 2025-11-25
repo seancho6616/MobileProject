@@ -1,4 +1,5 @@
 using System.Collections;
+// using Unity.Android.Gradle;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +10,17 @@ public class MonsterController : MonoBehaviour
     public float maxHealth = 10f;
     public float moveSpeed = 5f;
     public float attackDamage = 4f;
-    public float attackSpeed = 1f;
+    public float attackSpeed = 3f;
     public float detectionRange = 10f;
-    public float attackRange = 2f;
+    public float attackRange = 4f;
+    public LayerMask playerLayer;
 
     // 현재 상태
-    float currentHealth;
-    Animator animator;
+    private float currentHealth;
+    private Animator animator;
     private Transform player;
-    bool isPlayerInRange = false; // 플레이어가 범위 안에 있는지
+    private bool isPlayerInRange = false; // 플레이어가 범위 안에 있는지
+    
     
     public enum MonsterState
     {
@@ -33,15 +36,12 @@ public class MonsterController : MonoBehaviour
     private float attackTimer;
     private float idleTimer;
     private Vector3 patrolPoint;
-    SphereCollider sphereCollider;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         currentState = MonsterState.Idle;
-        sphereCollider = GetComponent<SphereCollider>();
-        sphereCollider.radius = detectionRange*2;
     }
 
     // 플레이어가 감지 범위에 들어옴
@@ -56,8 +56,15 @@ public class MonsterController : MonoBehaviour
             if (currentState == MonsterState.Idle || currentState == MonsterState.Patrol)
             {
                 currentState = MonsterState.Chase;
-                animator.SetBool("IsMove", true);
             }
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            player = other.transform;
+            isPlayerInRange = true;
         }
     }
 
@@ -73,8 +80,23 @@ public class MonsterController : MonoBehaviour
             if (currentState == MonsterState.Chase)
             {
                 currentState = MonsterState.Idle;
-                animator.SetBool("IsMove", false);
+                animator.SetBool("IsMoving", false);
             }
+        }
+    }
+
+    void CheckPlayerWithRaycast()
+    {
+        if (player == null) return;
+
+        // 몬스터 위치 (약간 위에서 쏨)
+        Vector3 rayStart = transform.position;
+        Vector3 direction = transform.forward*attackRange;
+        RaycastHit hit;
+        if(Physics.Raycast(rayStart, direction, out hit, attackRange))
+        {
+            // 닿은 물체의 이름을 출력
+            Debug.Log(hit.collider.gameObject.name);
         }
     }
 
@@ -108,7 +130,6 @@ public class MonsterController : MonoBehaviour
         {
             currentState = MonsterState.Patrol;
             SetRandomPatrolPoint();
-            animator.SetBool("IsMove", true);
             idleTimer = 0f;
         }
     }
@@ -116,8 +137,6 @@ public class MonsterController : MonoBehaviour
     // Patrol 상태 - 랜덤하게 돌아다님
     void UpdatePatrol()
     {
-        animator.SetBool("IsMove", true);
-
         // 목표 지점으로 이동
         MoveTowards(patrolPoint);
 
@@ -125,7 +144,7 @@ public class MonsterController : MonoBehaviour
         if (Vector3.Distance(transform.position, patrolPoint) < 0.5f)
         {
             currentState = MonsterState.Idle;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             idleTimer = 0f;
         }
     }
@@ -137,7 +156,7 @@ public class MonsterController : MonoBehaviour
         if (player == null || !isPlayerInRange)
         {
             currentState = MonsterState.Idle;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             return;
         }
 
@@ -147,7 +166,7 @@ public class MonsterController : MonoBehaviour
         if (distance < attackRange)
         {
             currentState = MonsterState.Attack;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             return;
         }
 
@@ -161,7 +180,7 @@ public class MonsterController : MonoBehaviour
         if (player == null || !isPlayerInRange)
         {
             currentState = MonsterState.Idle;
-            animator.SetBool("IsMove", false);
+            animator.SetBool("IsMoving", false);
             return;
         }
 
@@ -171,7 +190,6 @@ public class MonsterController : MonoBehaviour
         if (distance > attackRange)
         {
             currentState = MonsterState.Chase;
-            animator.SetBool("IsMove", true);
             return;
         }
 
@@ -182,6 +200,8 @@ public class MonsterController : MonoBehaviour
         attackTimer += Time.deltaTime;
         if (attackTimer >= attackSpeed)
         {
+            animator.SetTrigger("Attack");
+
             Attack();
             attackTimer = 0f;
         }
@@ -190,6 +210,8 @@ public class MonsterController : MonoBehaviour
     // 목표 지점으로 이동
     void MoveTowards(Vector3 target)
     {
+        animator.SetBool("IsMoving", true);
+
         Vector3 direction = (target - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
         
@@ -222,7 +244,6 @@ public class MonsterController : MonoBehaviour
     // 공격
     void Attack()
     {
-        animator.SetTrigger("Attack");
         
         // 플레이어에게 데미지
         if (player != null)
@@ -230,9 +251,7 @@ public class MonsterController : MonoBehaviour
             float distance = Vector3.Distance(transform.position, player.position);
             if (distance < attackRange)
             {
-                // 플레이어 체력 감소 (PlayerHealth 스크립트가 있다고 가정)
-                // player.GetComponent<PlayerHealth>()?.TakeDamage(attackDamage);
-                Debug.Log("플레이어 공격!");
+                CheckPlayerWithRaycast();
             }
         }
     }
@@ -268,5 +287,11 @@ public class MonsterController : MonoBehaviour
         // 공격 범위 (빨간색)
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        
+        
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, transform.forward*attackRange);
+        
     }
 }
