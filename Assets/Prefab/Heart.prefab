@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 678698aac3ef6d342bffd735a3372d4b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: 0.63
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 678698aac3ef6d342bffd735a3372d4b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -262,4 +262,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaf6aab6e6dae3145be6f5955f270508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  rotateSpeed: 50
+  type: 2
+  value: 1

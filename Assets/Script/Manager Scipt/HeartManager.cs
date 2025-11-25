@@ -4,20 +4,7 @@ using UnityEngine.UI;
 
 public class HeartManager : MonoBehaviour
 {
-    [Header("Heart")]
-    [SerializeField] float maxHealth = 16f; // 현재 최대 목숨
-    public float MaxHealth
-    {
-        get => maxHealth;
-        set => maxHealth += value;
-    }
-    
-    [SerializeField] float currentHealth; // 현재 목숨
-    public float CurrentHealth
-    {
-        get => currentHealth;
-        set => currentHealth += value;
-    }
+    PlayerStats playerStats;
     
     float maxPositionHealth = 9f;
 
@@ -33,6 +20,7 @@ public class HeartManager : MonoBehaviour
 
     void Awake()
     {
+        playerStats = FindAnyObjectByType<PlayerStats>();
         for (int i = 0; i < maxPositionHealth; i++)
         {
             if (heartPrefab != null && parentUI != null)
@@ -64,8 +52,8 @@ public class HeartManager : MonoBehaviour
     {
         if (healthContainerPool.Count == 0) return;
 
-        int requiredContainers = Mathf.CeilToInt((float)maxHealth / heartPerContainer);
-        float healthToFill = currentHealth;
+        int requiredContainers = Mathf.CeilToInt((float)playerStats.MaxHealth / heartPerContainer);
+        float healthToFill = playerStats.CurrentHealth;
 
         for (int i = 0; i < healthContainerPool.Count; i++)
         {
@@ -90,14 +78,14 @@ public class HeartManager : MonoBehaviour
 
     public void MakeSameHeart() // 현재 목숨 초기 설정
     {
-        currentHealth = maxHealth;
+        playerStats.CurrentHealth = playerStats.MaxHealth;
     }
 
     // Manager.cs에서 호출하는 함수
     public void SetHealthDirectly(int current, int max)
     {
-        currentHealth = (float)current; 
-        maxHealth = (float)max;
+        playerStats.CurrentHealth = (float)current; 
+        playerStats.MaxHealth = (float)max;
         
         isDataLoaded = true; 
         

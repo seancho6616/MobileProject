@@ -1,297 +1,236 @@
-using System.Collections;
-// using Unity.Android.Gradle;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.AI;
+using System.Collections;
 
 
-public class MonsterController : MonoBehaviour
+public class MonsterAI : MonoBehaviour
 {
-    // 몬스터 스탯
-    public float maxHealth = 10f;
-    public float moveSpeed = 5f;
-    public float attackDamage = 4f;
-    public float attackSpeed = 3f;
-    public float detectionRange = 10f;
-    public float attackRange = 4f;
-    public LayerMask playerLayer;
-
-    // 현재 상태
-    private float currentHealth;
-    private Animator animator;
+    [Header("Movement Settings")]
+    [SerializeField] private float wanderRadius = 10f;
+    [SerializeField] private float wanderTimer = 5f;
+    [SerializeField] private float chaseSpeed = 3.5f;
+    [SerializeField] private float wanderSpeed = 2f;
+    
+    [Header("Detection Settings")]
+    [SerializeField] private float detectionRadius = 8f;
+    [SerializeField] private LayerMask playerLayer;
+    
+    [Header("Attack Settings")]
+    [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float attackDamage = 4f;
+    [SerializeField] private float attackCooldown = 2f;
+    
+    private NavMeshAgent agent;
     private Transform player;
-    private bool isPlayerInRange = false; // 플레이어가 범위 안에 있는지
+    private float wanderTimerCurrent;
+    private float attackTimerCurrent;
+    private bool isChasing = false;
+    bool isplayer = false;
+    bool isAttacking = false;
+    Animator animator;
+    PlayerControl playerControl;
     
-    
-    public enum MonsterState
+    private enum State
     {
-        Idle,
-        Patrol,
-        Chase,
-        Attack,
-        Die
+        Wandering,
+        Chasing,
+        Attacking
     }
-    public MonsterState currentState;
-
-    // 타이머들
-    private float attackTimer;
-    private float idleTimer;
-    private Vector3 patrolPoint;
-
+    
+    private State currentState = State.Wandering;
+    
     void Start()
     {
+        agent = GetComponent<NavMeshAgent>();
+        playerControl = FindAnyObjectByType<PlayerControl>();
         animator = GetComponent<Animator>();
-        currentHealth = maxHealth;
-        currentState = MonsterState.Idle;
+        wanderTimerCurrent = wanderTimer;
+        attackTimerCurrent = 0f;
+        
+        // 초기 속도 설정
+        agent.speed = wanderSpeed;
     }
-
-    // 플레이어가 감지 범위에 들어옴
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            player = other.transform;
-            isPlayerInRange = true;
-            
-            // Idle이나 Patrol 상태면 바로 Chase로
-            if (currentState == MonsterState.Idle || currentState == MonsterState.Patrol)
-            {
-                currentState = MonsterState.Chase;
-            }
-        }
-    }
-    void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            player = other.transform;
-            isPlayerInRange = true;
-        }
-    }
-
-    // 플레이어가 감지 범위에서 나감
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isPlayerInRange = false;
-            player = null;
-            
-            // Chase 상태면 Idle로
-            if (currentState == MonsterState.Chase)
-            {
-                currentState = MonsterState.Idle;
-                animator.SetBool("IsMoving", false);
-            }
-        }
-    }
-
-    void CheckPlayerWithRaycast()
-    {
-        if (player == null) return;
-
-        // 몬스터 위치 (약간 위에서 쏨)
-        Vector3 rayStart = transform.position;
-        Vector3 direction = transform.forward*attackRange;
-        RaycastHit hit;
-        if(Physics.Raycast(rayStart, direction, out hit, attackRange))
-        {
-            // 닿은 물체의 이름을 출력
-            Debug.Log(hit.collider.gameObject.name);
-        }
-    }
-
+    
     void Update()
     {
-        // 현재 상태에 따라 행동
+        // 플레이어 감지
+        DetectPlayer();
+        
+        // 공격 쿨다운 감소
+        if (attackTimerCurrent > 0)
+        {
+            attackTimerCurrent -= Time.deltaTime;
+        }
+        
+        // 상태에 따른 행동
         switch (currentState)
         {
-            case MonsterState.Idle:
-                UpdateIdle();
+            case State.Wandering:
+                Wander();
                 break;
-            case MonsterState.Patrol:
-                UpdatePatrol();
+            case State.Chasing:
+                ChasePlayer();
                 break;
-            case MonsterState.Chase:
-                UpdateChase();
-                break;
-            case MonsterState.Attack:
-                UpdateAttack();
+            case State.Attacking:
+                AttackPlayer();
                 break;
         }
     }
-
-    // Idle 상태 - 가만히 있다가 순찰
-    void UpdateIdle()
+    
+    void DetectPlayer()
     {
-        idleTimer += Time.deltaTime;
-
-        // 3초 후 순찰 시작
-        if (idleTimer > 3f)
-        {
-            currentState = MonsterState.Patrol;
-            SetRandomPatrolPoint();
-            idleTimer = 0f;
-        }
-    }
-
-    // Patrol 상태 - 랜덤하게 돌아다님
-    void UpdatePatrol()
-    {
-        // 목표 지점으로 이동
-        MoveTowards(patrolPoint);
-
-        // 도착하면 다시 Idle
-        if (Vector3.Distance(transform.position, patrolPoint) < 0.5f)
-        {
-            currentState = MonsterState.Idle;
-            animator.SetBool("IsMoving", false);
-            idleTimer = 0f;
-        }
-    }
-
-    // Chase 상태 - 플레이어 쫓아감
-    void UpdateChase()
-    {
-        // 플레이어가 범위 밖으로 나가면 이미 OnTriggerExit에서 처리됨
-        if (player == null || !isPlayerInRange)
-        {
-            currentState = MonsterState.Idle;
-            animator.SetBool("IsMoving", false);
-            return;
-        }
-
-        float distance = Vector3.Distance(transform.position, player.position);
-
-        // 공격 범위 안이면 공격
-        if (distance < attackRange)
-        {
-            currentState = MonsterState.Attack;
-            animator.SetBool("IsMoving", false);
-            return;
-        }
-
-        // 플레이어 쫓아가기
-        MoveTowards(player.position);
-    }
-
-    // Attack 상태 - 플레이어 공격
-    void UpdateAttack()
-    {
-        if (player == null || !isPlayerInRange)
-        {
-            currentState = MonsterState.Idle;
-            animator.SetBool("IsMoving", false);
-            return;
-        }
-
-        float distance = Vector3.Distance(transform.position, player.position);
-
-        // 멀어지면 다시 추적
-        if (distance > attackRange)
-        {
-            currentState = MonsterState.Chase;
-            return;
-        }
-
-        // 플레이어 바라보기
-        LookAtPlayer();
-
-        // 공격 쿨타임
-        attackTimer += Time.deltaTime;
-        if (attackTimer >= attackSpeed)
-        {
-            animator.SetTrigger("Attack");
-
-            Attack();
-            attackTimer = 0f;
-        }
-    }
-
-    // 목표 지점으로 이동
-    void MoveTowards(Vector3 target)
-    {
-        animator.SetBool("IsMoving", true);
-
-        Vector3 direction = (target - transform.position).normalized;
-        transform.position += direction * moveSpeed * Time.deltaTime;
+        if(isAttacking) return;
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
         
-        // 이동 방향 바라보기
-        if (direction != Vector3.zero)
+        if (hits.Length > 0)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            player = hits[0].transform;
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            
+            if (distanceToPlayer <= attackRange)
+            {
+                currentState = State.Attacking;
+            }
+            else
+            {
+                currentState = State.Chasing;
+                agent.speed = chaseSpeed;
+            }
+        }
+        else
+        {
+            player = null;
+            currentState = State.Wandering;
+            agent.speed = wanderSpeed;
         }
     }
-
-    // 플레이어 바라보기
-    void LookAtPlayer()
+    
+    void Wander()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0; // y축 회전 방지
-        if (direction != Vector3.zero)
+        wanderTimerCurrent += Time.deltaTime;
+        animator.SetBool("IsMoving", false);
+        if (wanderTimerCurrent >= wanderTimer)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            animator.SetBool("IsMoving", true);
+            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius);
+            agent.SetDestination(newPos);
+            wanderTimerCurrent = 0;
         }
     }
-
-    // 랜덤 순찰 지점 설정
-    void SetRandomPatrolPoint()
+    
+    void ChasePlayer()
     {
-        Vector3 randomDir = Random.insideUnitSphere * 10f;
-        randomDir.y = 0;
-        patrolPoint = transform.position + randomDir;
-    }
-
-    // 공격
-    void Attack()
-    {
-        
-        // 플레이어에게 데미지
         if (player != null)
         {
-            float distance = Vector3.Distance(transform.position, player.position);
-            if (distance < attackRange)
+            agent.SetDestination(player.position);
+            animator.SetBool("IsMoving", true);
+
+        }
+    }
+    
+    void AttackPlayer()
+    {
+        // 플레이어를 바라보기
+        if (player != null)
+        {
+            Vector3 direction = (player.position - transform.position).normalized;
+            direction.y = 0;
+            transform.rotation = Quaternion.Slerp(transform.rotation,
+                Quaternion.LookRotation(direction), Time.deltaTime * 5f);
+            animator.SetBool("IsMoving", false);
+
+
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+
+            // 공격 실행
+            if (attackTimerCurrent <= 0 && !isAttacking)
             {
-                CheckPlayerWithRaycast();
+                isAttacking = true;
+                attackTimerCurrent = attackCooldown;
+                PerformAttack();
             }
         }
     }
 
-    // 데미지 받기
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-        animator.SetTrigger("Hit");
 
-        if (currentHealth <= 0)
+    void PerformAttack()
+    {
+        Debug.Log("몬스터가 공격!");
+        
+        // 여기에 공격 애니메이션 트리거 추가
+        animator.SetTrigger("Attack");
+        
+        // 플레이어에게 데미지 적용
+        if (player != null)
         {
-            Die();
+            Invoke("PlayerCheck", 1f);
+            // //PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            // if (playerHealth != null)
+            // {
+            //     playerHealth.TakeDamage(attackDamage);
+            // }
+
+            if (isplayer)
+            {
+                // StartCoroutine(playerControl.Damaged(attackDamage));
+                playerControl.Damaged(attackDamage);
+            }
+            Invoke("EndAttack", attackCooldown);
         }
     }
-
-    // 죽음
-    void Die()
+    private void EndAttack()
     {
-        currentState = MonsterState.Die;
-        animator.SetTrigger("Die");
-        enabled = false; // Update 멈춤
-        Destroy(gameObject, 2f); // 2초 후 삭제
+        isAttacking = false;
+        agent.isStopped = false;
+        if(player != null)
+        {
+            // 플레이어가 공격 범위를 벗어났는지 확인
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            if (distanceToPlayer > attackRange)
+            {
+                currentState = State.Chasing;
+            }
+        }
+        else
+        {
+            currentState = State.Wandering;
+        }
     }
-
-    // 디버그용 - 감지/공격 범위 표시
+    
+    Vector3 RandomNavSphere(Vector3 origin, float dist)
+    {
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+        randDirection += origin;
+        
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randDirection, out navHit, dist, NavMesh.AllAreas);
+        
+        return navHit.position;
+    }
+    
+    // Gizmo로 감지 범위 표시
     void OnDrawGizmosSelected()
     {
-        // 감지 범위 (노란색)
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
         
-        // 공격 범위 (빨간색)
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        
-        
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, transform.forward*attackRange);
-        
+    }
+    void PlayerCheck()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, transform.forward, out hit, attackRange))
+        {
+            if (hit.collider.tag.Equals("Player"))
+            {
+                Debug.Log("you hitted");
+                isplayer = true;
+            }
+            else {isplayer =false;}
+        }
     }
 }
