@@ -21,7 +21,7 @@ public class PlayerCollider : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other) {
         
-        if(other.gameObject.tag == "Stamina")
+        if(other.CompareTag("Stamina"))
         {
             attackImageChanger.ChangeSprite(); // 이미지 변경
             playerControl.pickupStamina = true;
@@ -34,7 +34,7 @@ public class PlayerCollider : MonoBehaviour
             // }
             // Destroy(other.gameObject);
         }
-        if(other.gameObject.tag == "Heart")
+        if(other.CompareTag("Heart"))
         {
             attackImageChanger.ChangeSprite();
             playerControl.pickupHeart = true;
@@ -43,14 +43,14 @@ public class PlayerCollider : MonoBehaviour
             // heartManager.MakeSameHeart();
             // Destroy(other.gameObject);
         }
-        if(other.gameObject.tag == "Potion")
+        if(other.CompareTag("Potion"))
         {
             attackImageChanger.ChangeSprite();
             playerControl.pickupPotion = true;
             playerControl.Item = other.gameObject;
 
         }
-        if(other.gameObject.tag == "Coin")
+        if(other.CompareTag("Coin"))
         {
             playerStats.CoinCount += 1;
             int coin = playerStats.CoinCount;
@@ -60,7 +60,10 @@ public class PlayerCollider : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
-        attackImageChanger.BeforeChangeSprite();
-        playerControl.MakeFalse();
+        if (other.CompareTag("Monster"))
+        {
+            attackImageChanger.BeforeChangeSprite();
+            playerControl.MakeFalse();
+        }
     }
 }

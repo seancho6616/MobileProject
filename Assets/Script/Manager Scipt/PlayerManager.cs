@@ -16,8 +16,30 @@ public class PlayerManager : MonoBehaviour
     
     public int equippedWeaponId = 0;
 
+
+    public void GetCoin(int amount)
+    {
+        coins += amount;
+
+        if (Manager.Instance != null && Manager.Instance.textUI != null)
+        {
+            Manager.Instance.textUI.CountCoin(coins);
+        }
+    }
+
+    public void GetPotion(int amount)
+    {
+        potionCount += amount;
+
+        // UI 갱신
+        if (Manager.Instance != null && Manager.Instance.textUI != null)
+        {
+            Manager.Instance.textUI.CountPotion(potionCount);
+        }
+    }
+
     void Update()
     {
-        // 회복 로직 어케 넣지?
+        // 스태미너 회복 로직 등은 나중에 여기에 추가
     }
 }
