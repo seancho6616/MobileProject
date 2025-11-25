@@ -200,6 +200,8 @@ public class MonsterController : MonoBehaviour
         attackTimer += Time.deltaTime;
         if (attackTimer >= attackSpeed)
         {
+            animator.SetTrigger("Attack");
+
             Attack();
             attackTimer = 0f;
         }
@@ -242,7 +244,6 @@ public class MonsterController : MonoBehaviour
     // 공격
     void Attack()
     {
-        animator.SetTrigger("Attack");
         
         // 플레이어에게 데미지
         if (player != null)
