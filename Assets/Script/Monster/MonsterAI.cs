@@ -5,7 +5,7 @@ using System.Collections;
 
 public class MonsterAI : MonoBehaviour
 {
-    float health = 10f;
+    public float health = 10f;
     [Header("Movement Settings")]
     [SerializeField] private float wanderRadius = 10f;
     [SerializeField] private float wanderTimer = 5f;
