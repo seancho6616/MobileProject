@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.79
+      value: -4.65
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -30,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10.01
+      value: 9.61
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -65,16 +65,60 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8391222552659086748, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -8391222552659086748, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_TagString
       value: Monster
+      objectReference: {fileID: 0}
+    - target: {fileID: -7611661634702333960, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: -5477749408508380018, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3540272279435206582, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -2835375930379232893, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_Name
       value: Slime_Monstor1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_TagString
+      value: Monster
+      objectReference: {fileID: 0}
+    - target: {fileID: 2337130190143500625, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4021619187272719130, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6905609870639353253, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7036213049465896255, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719771546195959716, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8879528566716807029, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -98,10 +142,10 @@ PrefabInstance:
       addedObject: {fileID: 2085257670856982443}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7008211073594747076}
+      addedObject: {fileID: 4533629631680756656}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4533629631680756656}
+      addedObject: {fileID: 1613200583848413420}
   m_SourcePrefab: {fileID: 100100000, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
 --- !u!1 &7309259299606051540 stripped
 GameObject:
@@ -181,34 +225,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93458796c718e945a16fda226e04eb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 0.9
-  moveSpeed: 0.5
+  wanderRadius: 10
+  wanderTimer: 5
+  chaseSpeed: 3.5
+  wanderSpeed: 2
+  detectionRadius: 8
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  attackRange: 2.4
   attackDamage: 4
-  attackSpeed: 1
-  detectionRange: 10
-  attackRange: 2
-  currentState: 0
---- !u!135 &7008211073594747076
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7309259299606051540}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 3.6
-  m_Center: {x: 0, y: 0, z: 0}
+  attackCooldown: 2
 --- !u!136 &4533629631680756656
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -232,3 +259,25 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!195 &1613200583848413420
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7309259299606051540}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

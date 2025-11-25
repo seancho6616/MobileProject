@@ -8,6 +8,7 @@ public class Manager : MonoBehaviour
     [Header("Managers")]
     public PlayerManager playerManager; // 스탯 관리
     public HeartManager heartManager;   // 체력 관리
+    PlayerStats playerStats;
     public GameObject player;           // 플레이어 위치
     
     [Header("UI")]
@@ -15,6 +16,7 @@ public class Manager : MonoBehaviour
 
     void Awake()
     {
+        playerStats = FindAnyObjectByType<PlayerStats>();
         if (Instance == null) Instance = this;
     }
 
@@ -56,8 +58,8 @@ public class Manager : MonoBehaviour
         // 2. 체력 정보 저장
         if (heartManager != null)
         {
-            data.maxHeart = (int)heartManager.MaxHealth;
-            data.currentHeart = (int)heartManager.CurrentHealth;
+            data.maxHeart = (int)playerStats.MaxHealth;
+            data.currentHeart = (int)playerStats.CurrentHealth;
         }
 
         // 3. 스탯 및 아이템 정보 저장

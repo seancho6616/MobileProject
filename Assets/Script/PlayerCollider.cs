@@ -60,7 +60,7 @@ public class PlayerCollider : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Monster"))
+        if (!other.CompareTag("Monster"))
         {
             attackImageChanger.BeforeChangeSprite();
             playerControl.MakeFalse();

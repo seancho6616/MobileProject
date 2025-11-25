@@ -18,16 +18,16 @@ public class PlayerControl : MonoBehaviour
     public bool pickupDisHeart = false;
     public bool pickupStamina = false;
     
-
     Vector3 movement;
     Rigidbody rigid;
     Animator ani;
-
     PlayerStemina playerStemina;
     HeartManager heartManager;
     PlayerStats playerStats;
     TextUI textUI;
     AttackImageChanger attackImageChanger;
+    Renderer[] partsRenderers;
+
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
@@ -37,6 +37,7 @@ public class PlayerControl : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         textUI = FindAnyObjectByType<TextUI>();
         attackImageChanger = FindAnyObjectByType<AttackImageChanger>();
+        partsRenderers = GetComponentsInChildren<Renderer>(true);
     }
     void FixedUpdate()
     {
@@ -65,10 +66,12 @@ public class PlayerControl : MonoBehaviour
         
         if(!canAttack) yield break;
         canMove = false;
+        ani.SetBool("IsMove", false);
         if (pickupHeart)
         {
+            movement = Vector3.zero;
             ani.SetTrigger("Action");
-            heartManager.MaxHealth =4f;
+            playerStats.MaxHealth =4f;
             heartManager.MakeSameHeart();
             pickupHeart = false;
             attackImageChanger.BeforeChangeSprite();
@@ -76,6 +79,8 @@ public class PlayerControl : MonoBehaviour
         }
         else if (pickupStamina)
         {
+            movement = Vector3.zero;
+
             ani.SetTrigger("Action");
             if(playerStemina.MaxStamina > playerStemina.currentStamina)
             {
@@ -89,6 +94,8 @@ public class PlayerControl : MonoBehaviour
         }
         else if (pickupPotion)
         {
+            movement = Vector3.zero;
+
             ani.SetTrigger("Action");
             int count = playerStats.PotionCount += 1;
             textUI.CountPotion(count);
@@ -133,13 +140,33 @@ public class PlayerControl : MonoBehaviour
         if(count == 0) yield break;
         (canDash, canMove, canAttack) = (false, false, false);
         playerStats.healParticle.Play();
-        heartManager.CurrentHealth = 4f;
+        playerStats.CurrentHealth = 4f;
         count = playerStats.PotionCount -= 1;
         textUI.CountPotion(count);
         yield return new WaitForSeconds(1.0f);
         (canDash, canMove, canAttack) = (true, true, true);
 
     }
+    Color damageColor = new Color(255f,78f,87f,123f);
+    Color basicColor = new Color(182f,169f,163f,255f);
+    public void Damaged(float value)
+    {
+        playerStats.CurrentHealth = -value;
+        // ChangeColor(damageColor);
+        //yield return new WaitForSeconds(.1f);
+        // ChangeColor(basicColor);
+        // yield break;
+    }
+
+    void ChangeColor(Color newColor)
+    {
+        foreach (Renderer renderer in partsRenderers)
+        {
+            renderer.material.color = newColor;
+        }
+    }
+
+
     public void MakeFalse()
     {
         pickupDisHeart = false;
