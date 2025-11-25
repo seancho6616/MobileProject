@@ -13,7 +13,7 @@ public class PlayerStats: MonoBehaviour  // 플레이어 정보 데이터
         set => maxHealth = value; 
     }
 
-    [SerializeField] float currentHealth = 16f;
+    [SerializeField] float currentHealth;
     public float CurrentHealth
     {
         get => currentHealth;
@@ -37,7 +37,8 @@ public class PlayerStats: MonoBehaviour  // 플레이어 정보 데이터
     
     void Awake()
     {
-        CurrentStamina = MaxStamina; // 현재 = 최대 (100)
+        CurrentStamina = MaxStamina; 
+        CurrentHealth = MaxHealth; 
     }
     
     [Header("Coin & Potion count")]
