@@ -7,7 +7,7 @@ public class MonsterAI : MonoBehaviour
 {
     public float health = 10f;
     [Header("Movement Settings")]
-    [SerializeField] private float wanderRadius = 10f;
+    [SerializeField] private float wanderRadius = 8f;
     [SerializeField] private float wanderTimer = 5f;
     [SerializeField] private float chaseSpeed = 3.5f;
     [SerializeField] private float wanderSpeed = 2f;
@@ -25,13 +25,17 @@ public class MonsterAI : MonoBehaviour
     private Transform player;
     private float wanderTimerCurrent;
     private float attackTimerCurrent;
-    private bool isChasing = false;
     bool isplayer = false;
     bool isAttacking = false;
+    bool isDie= false;
     Animator animator;
     PlayerControl playerControl;
-    Renderer monsterRenderer;
-    
+    SkinnedMeshRenderer rendererColor;
+    [SerializeField]ParticleSystem dieParticle;
+    [SerializeField] GameObject body;
+    Color basicColor; 
+    Color changeColor;
+        
     private enum State
     {
         Wandering,
@@ -46,10 +50,12 @@ public class MonsterAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         playerControl = FindAnyObjectByType<PlayerControl>();
         animator = GetComponent<Animator>();
-        monsterRenderer = GetComponent<Renderer>();
+        rendererColor = GetComponentInChildren<SkinnedMeshRenderer>();
+
         wanderTimerCurrent = wanderTimer;
         attackTimerCurrent = 0f;
-        
+        basicColor = rendererColor.material.color;
+        changeColor = Color.softRed;
         // 초기 속도 설정
         agent.speed = wanderSpeed;
     }
@@ -58,7 +64,6 @@ public class MonsterAI : MonoBehaviour
     {
         // 플레이어 감지
         DetectPlayer();
-        
         // 공격 쿨다운 감소
         if (attackTimerCurrent > 0)
         {
@@ -82,8 +87,8 @@ public class MonsterAI : MonoBehaviour
     
     void DetectPlayer()
     {
-        if(isAttacking) return;
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
+        if(isAttacking || isDie) return;
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius-2f, playerLayer);
         
         if (hits.Length > 0)
         {
@@ -111,13 +116,13 @@ public class MonsterAI : MonoBehaviour
     void Wander()
     {
         wanderTimerCurrent += Time.deltaTime;
-        animator.SetBool("IsMoving", false);
+        animator.SetBool("IsMoving", true);
         if (wanderTimerCurrent >= wanderTimer)
         {
-            animator.SetBool("IsMoving", true);
             Vector3 newPos = RandomNavSphere(transform.position, wanderRadius);
             agent.SetDestination(newPos);
             wanderTimerCurrent = 0;
+            animator.SetBool("IsMoving", false);
         }
     }
     
@@ -149,6 +154,8 @@ public class MonsterAI : MonoBehaviour
             // 공격 실행
             if (attackTimerCurrent <= 0 && !isAttacking)
             {
+                // 여기에 공격 애니메이션 트리거 추가
+                animator.SetTrigger("Attack");
                 isAttacking = true;
                 attackTimerCurrent = attackCooldown;
                 PerformAttack();
@@ -161,22 +168,13 @@ public class MonsterAI : MonoBehaviour
     {
         Debug.Log("몬스터가 공격!");
         
-        // 여기에 공격 애니메이션 트리거 추가
-        animator.SetTrigger("Attack");
         
         // 플레이어에게 데미지 적용
-        if (player != null)
+        if (player != null || !isDie)
         {
             Invoke("PlayerCheck", 1f);
-            // //PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-            // if (playerHealth != null)
-            // {
-            //     playerHealth.TakeDamage(attackDamage);
-            // }
-
             if (isplayer)
             {
-                // StartCoroutine(playerControl.Damaged(attackDamage));
                 playerControl.Damaged(attackDamage);
             }
             Invoke("EndAttack", attackCooldown);
@@ -204,10 +202,74 @@ public class MonsterAI : MonoBehaviour
     public void Damaged(float value)
     {
         health -= value;
-        monsterRenderer.material.color = Color.red;
+        
+        if(health <= 0)
+        {
+            agent.isStopped = true;
+            this.enabled = false;  // 스크립트 비활성화
 
+            body.SetActive(false);
+            dieParticle.Play();
+            Invoke("Die",2.3f);
+            return;
+        }
+        
+        // 피격 상태로 전환
+        StopAllCoroutines();
+        StartCoroutine(HitRoutine());
     }
-    
+    private IEnumerator HitRoutine()
+    {
+        // 피격 시작
+        isAttacking = true;  // 다른 행동 방지
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        
+        animator.SetTrigger("Hit");
+        ChangeColor(changeColor);
+        
+        // 피격 애니메이션 재생 시간
+        yield return new WaitForSeconds(0.5f);
+        
+        // 색상 복구
+        ChangeColor(basicColor);
+        
+        // 상태 복구
+        isAttacking = false;
+        agent.isStopped = false;
+        
+        // 플레이어가 여전히 범위 내에 있는지 확인
+        if(player != null)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            if (distanceToPlayer <= attackRange)
+            {
+                currentState = State.Attacking;
+            }
+            else if (distanceToPlayer <= detectionRadius)
+            {
+                currentState = State.Chasing;
+            }
+            else
+            {
+                currentState = State.Wandering;
+            }
+        }
+        else
+        {
+            currentState = State.Wandering;
+        }
+    }
+
+    private void Die()
+    {
+        
+        // 사망 처리
+        agent.enabled = false;
+        gameObject.SetActive(false);
+        // Destroy(gameObject, 2f);  // 2초 후 제거
+    }
+
     Vector3 RandomNavSphere(Vector3 origin, float dist)
     {
         Vector3 randDirection = Random.insideUnitSphere * dist;
@@ -242,5 +304,10 @@ public class MonsterAI : MonoBehaviour
             }
             else {isplayer =false;}
         }
+    }
+    void ChangeColor(Color c)
+    {
+        Debug.Log("색변환");
+        rendererColor.material.color = c;
     }
 }

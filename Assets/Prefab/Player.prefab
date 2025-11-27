@@ -4990,7 +4990,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7386090128178320508}
   - component: {fileID: 7057917790567953490}
-  - component: {fileID: 1328694206291400841}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -5035,20 +5034,6 @@ MonoBehaviour:
   baseAttackSpeed: 1
   attackRange: 10
   equippedWeaponId: 0
---- !u!114 &1328694206291400841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6331065435210947150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76e9ca55aa3c2664787c378591af09e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HeartManager
-  heartPrefab: {fileID: 0}
-  parentUI: {fileID: 0}
 --- !u!1001 &3353733518433936777
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5128,37 +5113,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fb1fb1dabae103646876c73920255c2d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 491479838182129950}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb1fb1dabae103646876c73920255c2d, type: 3}
---- !u!1 &2471265686167378136 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fb1fb1dabae103646876c73920255c2d, type: 3}
-  m_PrefabInstance: {fileID: 3353733518433936777}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &491479838182129950
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2471265686167378136}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 4.62, y: 8.51, z: 0.7000006}
-  m_Center: {x: -0.16903299, y: 2.47, z: 0.00000063008054}
 --- !u!4 &2954470897675534946 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fb1fb1dabae103646876c73920255c2d, type: 3}
@@ -5500,6 +5456,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 799edbbf3957cde4f9ae7e044ed2bc83, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2449056215844562404}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 799edbbf3957cde4f9ae7e044ed2bc83, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6769829342965500457}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 799edbbf3957cde4f9ae7e044ed2bc83, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8835201830471680890}
   m_SourcePrefab: {fileID: 100100000, guid: 799edbbf3957cde4f9ae7e044ed2bc83, type: 3}
 --- !u!1 &5032476196822650977 stripped
 GameObject:
@@ -5569,11 +5531,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
   Item: {fileID: 0}
-  moveSpeed: 5
   pickupPotion: 0
   pickupHeart: 0
   pickupDisHeart: 0
   pickupStamina: 0
+  isMonster: 0
 --- !u!114 &3209143716946509844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5672,7 +5634,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStemina
   staminaIm: {fileID: 0}
-  currentStamina: 0
 --- !u!114 &3164810803687230689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5699,9 +5660,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf1389c8f965ea46a60ef8264dd0d34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  MoveSpeed: 5
   maxHealth: 16
-  currentHealth: 0
+  currentHealth: 16
+  maxStamina: 100
+  currentStamina: 100
   healParticle: {fileID: 8416466392008066239}
+--- !u!65 &6769829342965500457
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5032476196822650977}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 0.73, z: 0.51}
+  m_Center: {x: 0, y: 0.84, z: 1.24}
+--- !u!114 &8835201830471680890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5032476196822650977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6412c8ec3927646a72a2fd33303df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponCollider
 --- !u!4 &5664722236981463771 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 799edbbf3957cde4f9ae7e044ed2bc83, type: 3}

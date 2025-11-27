@@ -42,17 +42,26 @@ public class PlayerControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Move();
+        if (canMove)
+        {
+            Move();
+        }
     }
     void Move()
     {
         if (playerStats == null) return;
         Vector3 move = rigid.position + movement * playerStats.MoveSpeed * Time.fixedDeltaTime;
+        transform.LookAt(transform.position + movement);
         rigid.MovePosition(move);
     }
     void OnMovement(InputValue value) // 이동 버튼 입력
     {
-        if(!canMove) return;
+        if(!canMove) 
+        {
+            movement = Vector3.zero; // 움직임 초기화 추가
+            ani.SetBool("IsMove", false);
+            return;
+        }
         Vector2 input = value.Get<Vector2>();
         if(input != null)
         {
@@ -112,11 +121,12 @@ public class PlayerControl : MonoBehaviour
             Destroy(Item);
         }else if(canAttack)
         {
-            MonsterCheck();
             AttackMonster();
+            yield return new WaitForSeconds(.7f);
+
         }
-        yield return new WaitForSeconds(.5f);
         canMove = true;
+        yield return new WaitForSeconds(.5f);
     }
     IEnumerator OnDash() // 대시 버튼 입력
     {   
@@ -155,15 +165,10 @@ public class PlayerControl : MonoBehaviour
         (canDash, canMove, canAttack) = (true, true, true);
 
     }
-    Color damageColor = new Color(255f,78f,87f,123f);
-    Color basicColor = new Color(182f,169f,163f,255f);
     public void Damaged(float value)
     {
         playerStats.CurrentHealth -= value;
-        // ChangeColor(damageColor);
-        //yield return new WaitForSeconds(.1f);
-        // ChangeColor(basicColor);
-        // yield break;
+       
     }
 
     public void AttackMonster()
@@ -172,6 +177,7 @@ public class PlayerControl : MonoBehaviour
         ani.SetTrigger("Attack1");
         if (isMonster)
         {
+            Debug.Log("때렷다");
             monsterAI.Damaged(4f);
         }
     }
@@ -183,21 +189,9 @@ public class PlayerControl : MonoBehaviour
             renderer.material.color = newColor;
         }
     }
-    bool isMonster = false;
-    void MonsterCheck()
-    {
-        RaycastHit hit;
-        if(Physics.Raycast(transform.position, transform.forward, out hit, playerStats.attackRange))
-        {
-            if (hit.collider.tag.Equals("Monster"))
-            {
-                isMonster = true;
-            }
-            else {isMonster = false;}
-        }
-    }
+    public bool isMonster = false;
     
-
+    
     public void MakeFalse()
     {
         pickupDisHeart = false;

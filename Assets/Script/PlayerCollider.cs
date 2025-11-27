@@ -8,16 +8,12 @@ public class PlayerCollider : MonoBehaviour
     PlayerControl playerControl; // 아이템 획득 상태 변경
     AttackImageChanger attackImageChanger;
     TextUI textUI;
-    // PlayerStemina playerStemina; 
-    // HeartManager heartManager;
     void Start()
     {
         playerStats = GetComponent<PlayerStats>();
         playerControl = GetComponent<PlayerControl>();
         attackImageChanger = FindAnyObjectByType<AttackImageChanger>();
         textUI = FindAnyObjectByType<TextUI>();
-        // playerStemina = GetComponent<PlayerStemina>();
-        // heartManager = GetComponent<HeartManager>();
     }
     private void OnTriggerEnter(Collider other) {
         // 스태미너 아이템
@@ -26,13 +22,6 @@ public class PlayerCollider : MonoBehaviour
             attackImageChanger.ChangeSprite(); // 무기 아이콘이 획득 아이콘으로 변경
             playerControl.pickupStamina = true;
             playerControl.Item = other.gameObject;
-            // if(playerStemina.MaxStamina > playerStemina.currentStamina)
-            // {
-            //     playerStemina.currentStamina += 25f;
-            //     playerStemina.MaxStamina = 25f;    
-            //     playerStemina.UpdateStamina();
-            // }
-            // Destroy(other.gameObject);
         }
         // 목숨 아이템
         if(other.CompareTag("Heart"))
@@ -40,9 +29,6 @@ public class PlayerCollider : MonoBehaviour
             attackImageChanger.ChangeSprite();
             playerControl.pickupHeart = true;
             playerControl.Item = other.gameObject;
-            // heartManager.MaxHealth =4f;
-            // heartManager.MakeSameHeart();
-            // Destroy(other.gameObject);
         }
         // 포션 아이템 -> 갯수 증가만 하고 사용은 원할 때
         if(other.CompareTag("Potion"))
