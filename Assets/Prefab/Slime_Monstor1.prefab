@@ -5019,9 +5019,6 @@ PrefabInstance:
       addedObject: {fileID: 8589524877443441393}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7185007671000330228}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2085257670856982443}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dc3b748881bbcb4f91b42ec4f1b3c6a, type: 3}
       insertIndex: -1
@@ -5089,18 +5086,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7185007671000330228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7309259299606051540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47817a55bf3265f4b862c2dbbc7afe3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonsterState
 --- !u!114 &2085257670856982443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5113,17 +5098,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93458796c718e945a16fda226e04eb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  health: 10
-  wanderRadius: 8
+  monsterState: {fileID: 11400000, guid: eeef679a65ef39c44b65932b6226fa3a, type: 2}
   wanderTimer: 5
-  chaseSpeed: 1
-  wanderSpeed: 1
-  detectionRadius: 8
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
   attackRange: 1.6
-  attackDamage: 4
   attackCooldown: 2
   dieParticle: {fileID: 4627705013567064475}
   body: {fileID: 7071424125720475105}

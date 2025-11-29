@@ -262,4 +262,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaf6aab6e6dae3145be6f5955f270508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  itemState: {fileID: 11400000, guid: f9f2f6dcf5b322d42b89eecae2b41456, type: 2}
   rotateSpeed: 20

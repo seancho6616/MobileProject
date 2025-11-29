@@ -5,20 +5,16 @@ using System.Collections;
 
 public class MonsterAI : MonoBehaviour
 {
-    public float health = 10f;
+    public MonsterState monsterState;
+    float health;
     [Header("Movement Settings")]
-    [SerializeField] private float wanderRadius = 8f;
     [SerializeField] private float wanderTimer = 5f;
-    [SerializeField] private float chaseSpeed = 3.5f;
-    [SerializeField] private float wanderSpeed = 2f;
     
     [Header("Detection Settings")]
-    [SerializeField] private float detectionRadius = 8f;
     [SerializeField] private LayerMask playerLayer;
     
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackDamage = 4f;
     [SerializeField] private float attackCooldown = 2f;
     
     private NavMeshAgent agent;
@@ -52,12 +48,13 @@ public class MonsterAI : MonoBehaviour
         animator = GetComponent<Animator>();
         rendererColor = GetComponentInChildren<SkinnedMeshRenderer>();
 
+        health = monsterState.heart;
         wanderTimerCurrent = wanderTimer;
         attackTimerCurrent = 0f;
-        basicColor = rendererColor.material.color;
+        basicColor = rendererColor.sharedMaterial.color;
         changeColor = Color.softRed;
         // 초기 속도 설정
-        agent.speed = wanderSpeed;
+        agent.speed = monsterState.moveSpeed;
     }
     
     void Update()
@@ -88,28 +85,28 @@ public class MonsterAI : MonoBehaviour
     void DetectPlayer()
     {
         if(isAttacking || isDie) return;
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius-2f, playerLayer);
+        Collider[] hits = Physics.OverlapSphere(transform.position, monsterState.wanderRadius, playerLayer);
         
         if (hits.Length > 0)
         {
             player = hits[0].transform;
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
             
-            if (distanceToPlayer <= attackRange)
+            if (distanceToPlayer <= monsterState.attackRange)
             {
                 currentState = State.Attacking;
             }
             else
             {
                 currentState = State.Chasing;
-                agent.speed = chaseSpeed;
+                agent.speed = monsterState.moveSpeed;
             }
         }
         else
         {
             player = null;
             currentState = State.Wandering;
-            agent.speed = wanderSpeed;
+            agent.speed = monsterState.moveSpeed;
         }
     }
     
@@ -119,7 +116,7 @@ public class MonsterAI : MonoBehaviour
         animator.SetBool("IsMoving", true);
         if (wanderTimerCurrent >= wanderTimer)
         {
-            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius);
+            Vector3 newPos = RandomNavSphere(transform.position, monsterState.wanderRadius);
             agent.SetDestination(newPos);
             wanderTimerCurrent = 0;
             animator.SetBool("IsMoving", false);
@@ -170,12 +167,12 @@ public class MonsterAI : MonoBehaviour
         
         
         // 플레이어에게 데미지 적용
-        if (player != null || !isDie)
+        if (player != null && !isDie)
         {
             Invoke("PlayerCheck", 1f);
             if (isplayer)
             {
-                playerControl.Damaged(attackDamage);
+                playerControl.Damaged(monsterState.attackDamage);
             }
             Invoke("EndAttack", attackCooldown);
         }
@@ -188,7 +185,7 @@ public class MonsterAI : MonoBehaviour
         {
             // 플레이어가 공격 범위를 벗어났는지 확인
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-            if (distanceToPlayer > attackRange)
+            if (distanceToPlayer > monsterState.attackRange)
             {
                 currentState = State.Chasing;
             }
@@ -242,11 +239,11 @@ public class MonsterAI : MonoBehaviour
         if(player != null)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-            if (distanceToPlayer <= attackRange)
+            if (distanceToPlayer <= monsterState.attackRange)
             {
                 currentState = State.Attacking;
             }
-            else if (distanceToPlayer <= detectionRadius)
+            else if (distanceToPlayer <= monsterState.wanderRadius)
             {
                 currentState = State.Chasing;
             }
@@ -285,17 +282,17 @@ public class MonsterAI : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.DrawWireSphere(transform.position, monsterState.wanderRadius);
         
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, monsterState.attackRange);
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(transform.position, transform.forward*attackRange);
+        Gizmos.DrawRay(transform.position, transform.forward*monsterState.attackRange);
     }
     void PlayerCheck()
     {
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, transform.forward, out hit, attackRange))
+        if(Physics.Raycast(transform.position, transform.forward, out hit, monsterState.attackRange))
         {
             if (hit.collider.tag.Equals("Player"))
             {
@@ -308,6 +305,6 @@ public class MonsterAI : MonoBehaviour
     void ChangeColor(Color c)
     {
         Debug.Log("색변환");
-        rendererColor.material.color = c;
+        rendererColor.sharedMaterial.color = c;
     }
 }
