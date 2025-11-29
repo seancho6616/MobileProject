@@ -14,13 +14,13 @@ public class MonsterAI : MonoBehaviour
     [SerializeField] private LayerMask playerLayer;
     
     [Header("Attack Settings")]
-    [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 2f;
     
     private NavMeshAgent agent;
     private Transform player;
     private float wanderTimerCurrent;
     private float attackTimerCurrent;
+    public bool isWeapon = false;
     bool isplayer = false;
     bool isAttacking = false;
     bool isDie= false;
@@ -202,6 +202,7 @@ public class MonsterAI : MonoBehaviour
         
         if(health <= 0)
         {
+            playerControl.isMonster = false;
             agent.isStopped = true;
             this.enabled = false;  // 스크립트 비활성화
 
@@ -264,7 +265,7 @@ public class MonsterAI : MonoBehaviour
         // 사망 처리
         agent.enabled = false;
         gameObject.SetActive(false);
-        // Destroy(gameObject, 2f);  // 2초 후 제거
+        //Destroy(gameObject, 2f);  // 2초 후 제거
     }
 
     Vector3 RandomNavSphere(Vector3 origin, float dist)

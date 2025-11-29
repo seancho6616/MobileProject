@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fec1197feba3ce41985ade4a8876d66, type: 3}
   m_Name: Stick
   m_EditorClassIdentifier: Assembly-CSharp::WeaponState
-  nameWeapon: 0
+  weaponType: 0
+  id: 2031
   weaponName: Stick
-  Damage: 0
-  attackSpeed: 0
+  damage: 2
+  attackSpeed: 1
   coinValue: 0

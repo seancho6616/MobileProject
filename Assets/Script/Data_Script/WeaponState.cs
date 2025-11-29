@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "WeaponState", menuName = "Scriptable Objects/WeaponState")]
 public class WeaponState : ScriptableObject
 {
-    public enum Name {Stick, Nailwood, Pipe, Brick}
+    public enum Name {Stick,Umbrella, Brick, Nailwood, Pipe}
     public Name weaponType;
+    public int id;
 
     public string weaponName;
 
-    public float Damage;
+    public float damage;
 
     public float attackSpeed;
 

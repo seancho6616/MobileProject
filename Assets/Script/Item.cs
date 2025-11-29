@@ -3,7 +3,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public ItemState itemState;
-    [SerializeField] float rotateSpeed = 20;
+    [SerializeField] float rotateSpeed;
     // Update is called once per frame
     void Update()
     {

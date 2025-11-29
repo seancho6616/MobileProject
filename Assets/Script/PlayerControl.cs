@@ -6,6 +6,7 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour
 {
     public GameObject Item;
+    public Weapon triggrtWeapon;
     bool canDash = true;
     bool canAttack = true;
     bool canMove = true;
@@ -14,6 +15,8 @@ public class PlayerControl : MonoBehaviour
     public bool pickupHeart = false;
     public bool pickupDisHeart = false;
     public bool pickupStamina = false;
+    public bool isWeapon = false;
+    public GameObject checkMonster;
     
     Vector3 movement;
     Rigidbody rigid;
@@ -26,6 +29,7 @@ public class PlayerControl : MonoBehaviour
     HeartManager heartManager;
     PlayerStats playerStats;
     AttackImageChanger attackImageChanger;
+    PlayerWeapon playerWeapon;
 
     void Awake()
     {
@@ -39,6 +43,9 @@ public class PlayerControl : MonoBehaviour
         heartManager = GetComponent<HeartManager>();
         playerStats = GetComponent<PlayerStats>();
         attackImageChanger = FindAnyObjectByType<AttackImageChanger>();
+        playerWeapon = GetComponent<PlayerWeapon>();
+
+        playerWeapon.ActivateWeaponID(playerStats.weaponId);
     }
     void FixedUpdate()
     {
@@ -119,14 +126,32 @@ public class PlayerControl : MonoBehaviour
             pickupPotion = false;
             attackImageChanger.BeforeChangeSprite();
             Destroy(Item);
-        }else if(canAttack)
+        }
+        else if (isWeapon)
         {
+            movement = Vector3.zero;
+            ani.SetTrigger("Action");
+            if(triggrtWeapon != null)
+            {
+                playerWeapon.DeactivateWeaponID(playerStats.weaponId);
+                playerStats.weaponId = triggrtWeapon.weaponState.id;
+                playerWeapon.ActivateWeaponID(playerStats.weaponId);
+                playerStats.attackDamage = triggrtWeapon.weaponState.damage;
+            }
+            Destroy(Item);
+            Item =null;
+            isWeapon = false;
+            attackImageChanger.BeforeChangeSprite();
+        }
+        else if(canAttack)
+        {
+            // checkMonster.SetActive(true);
             AttackMonster();
             yield return new WaitForSeconds(.7f);
-
         }
         canMove = true;
         yield return new WaitForSeconds(.5f);
+        // checkMonster.SetActive(false);
     }
     IEnumerator OnDash() // 대시 버튼 입력
     {   
@@ -177,9 +202,10 @@ public class PlayerControl : MonoBehaviour
         ani.SetTrigger("Attack1");
         if (isMonster)
         {
-            Debug.Log("때렷다");
-            monsterAI.Damaged(4f);
+            Debug.Log(playerStats.attackDamage);
+            monsterAI.Damaged(playerStats.attackDamage);
         }
+        //isMonster = false;
     }
 
     void ChangeColor(Color newColor)
@@ -198,5 +224,6 @@ public class PlayerControl : MonoBehaviour
         pickupHeart = false;
         pickupPotion = false;
         pickupStamina = false;
+        isWeapon = false;
     }
 }

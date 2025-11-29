@@ -13,5 +13,12 @@ public class WeaponCollider : MonoBehaviour
             playerControl.isMonster = true;
         }
     }
-    
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Monster"))
+        {
+            playerControl.isMonster = false;
+        }
+    }
+
 }

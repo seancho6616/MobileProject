@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fec1197feba3ce41985ade4a8876d66, type: 3}
   m_Name: Pipe
   m_EditorClassIdentifier: Assembly-CSharp::WeaponState
-  nameWeapon: 2
+  weaponType: 4
+  id: 2035
   weaponName: Pipe
-  Damage: 0
-  attackSpeed: 0
+  damage: 4
+  attackSpeed: 0.8
   coinValue: 0
