@@ -16,9 +16,29 @@ public class Manager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        if (playerStats == null && player != null)
-            playerStats = player.GetComponent<PlayerStats>();
+       if (Instance == null) Instance = this;
+        if (player == null)
+        {
+            // 1. "Player" 태그로 찾아보기
+            player = GameObject.FindGameObjectWithTag("Player");
+
+            // 2. 태그로 못 찾았으면 PlayerControl 스크립트를 가진 애를 찾아보기
+            if (player == null)
+            {
+                PlayerControl pc = FindAnyObjectByType<PlayerControl>();
+                if (pc != null) player = pc.gameObject;
+            }
+        }
+
+        if (player != null)
+        {
+            if (playerStats == null) playerStats = player.GetComponent<PlayerStats>();
+            if (playerManager == null) playerManager = player.GetComponent<PlayerManager>();
+        }
+        else
+        {
+            Debug.LogError("플레이어 찾기 실패");
+        }
     }
 
     void Start()
@@ -42,21 +62,30 @@ public class Manager : MonoBehaviour
     }
 
     // 저장
-    public void SaveGame()
+   // Manager.cs 안에 있는 SaveGame 함수 수정
+
+public void SaveGame()
+{
+    if (player == null) 
     {
-        if (player == null || playerManager == null) return;
+        Debug.LogError("저장 실패: Player 오브젝트가 연결되지 않았습니다.");
+        return;
+    }
 
-        GameData data = new GameData();
+    Debug.Log("--- 게임 데이터 저장 시작 ---");
+    GameData data = new GameData();
 
-        // 1. 위치 정보 저장
-        data.position = new PositionData(
-            player.transform.position.x,
-            player.transform.position.y,
-            player.transform.position.z
-        );
-        data.lastScene = SceneManager.GetActiveScene().name;
+    // 1. 위치 정보 저장
+    data.position = new PositionData(
+        player.transform.position.x,
+        player.transform.position.y,
+        player.transform.position.z
+    );
+    data.lastScene = SceneManager.GetActiveScene().name;
 
-        // 2. 체력 정보 저장
+    // 2. PlayerStats 데이터 저장 (체력, 스태미너, 코인, 포션, **이동속도**)
+    if (playerStats != null)
+    {
         data.maxHeart = (int)playerStats.MaxHealth;
         data.currentHeart = (int)playerStats.CurrentHealth;
 
@@ -65,20 +94,21 @@ public class Manager : MonoBehaviour
 
         data.coins = playerStats.CoinCount;
         data.potionCount = playerStats.PotionCount;
-
-        // 3. 스탯 정보 저장
-        if (playerManager != null)
+        
+        data.speed = (int)playerStats.MoveSpeed; 
+        
+        if(playerManager != null)
         {
-            data.speed = playerManager.speed;
             data.baseAttack = playerManager.baseAttack;
             data.baseAttackSpeed = playerManager.baseAttackSpeed;
             data.attackRange = playerManager.attackRange;
             data.equippedWeaponId = playerManager.equippedWeaponId;
         }
-
-        // 데이터를 서버로 전송함
-        StartCoroutine(NetworkManager.Instance.SaveGameData(data));
     }
+
+    // 3. 서버로 전송
+    StartCoroutine(NetworkManager.Instance.SaveGameData(data));
+}
 
     // 적용 (불러오기)
     public void ApplyGameData(GameData loadedData)
