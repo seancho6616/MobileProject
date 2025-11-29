@@ -44,7 +44,7 @@ public class NetworkManager : MonoBehaviour
         }, () => onResult?.Invoke(false));
     }
 
-    public IEnumerator SaveGameData(GameData data)
+    public IEnumerator SaveGameData(GameData data, Action onComplete = null)
     {
         Debug.Log("--- 2. [네트워크] 서버에 PATCH 요청 시작 ---");
         if (string.IsNullOrEmpty(authToken))
@@ -69,10 +69,12 @@ public class NetworkManager : MonoBehaviour
             if (req.result == UnityWebRequest.Result.Success)
             {
                 Debug.Log("게임 데이터 저장 완료");
+                onComplete?.Invoke();
             }
             else
             {
                 Debug.LogError("저장 실패: " + req.downloadHandler.text);
+                onComplete?.Invoke();
             }
         }
     }
