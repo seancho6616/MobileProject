@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System; // Action 사용을 위해 필수
 
 public class Manager : MonoBehaviour
 {
@@ -16,7 +17,9 @@ public class Manager : MonoBehaviour
 
     void Awake()
     {
-       if (Instance == null) Instance = this;
+        if (Instance == null) Instance = this;
+
+        // [자동 플레이어 찾기 로직 추가]
         if (player == null)
         {
             // 1. "Player" 태그로 찾아보기
@@ -30,6 +33,7 @@ public class Manager : MonoBehaviour
             }
         }
 
+        // 플레이어를 찾았으면 컴포넌트들도 자동으로 연결
         if (player != null)
         {
             if (playerStats == null) playerStats = player.GetComponent<PlayerStats>();
@@ -37,13 +41,12 @@ public class Manager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("플레이어 찾기 실패");
+            Debug.LogError("씬에 플레이어를 찾을 수 없습니다.");
         }
     }
 
     void Start()
     {
-
         if (GameDataStore.Instance != null && GameDataStore.Instance.isContinue)
         {
             if (GameDataStore.Instance.cachedData != null)
@@ -57,58 +60,65 @@ public class Manager : MonoBehaviour
         }
         else
         {
-            Debug.Log("새 게임입니다. (초기 상태로 start)");
+            Debug.Log("새 게임입니다.");
         }
     }
 
-    // 저장
-   // Manager.cs 안에 있는 SaveGame 함수 수정
-
-public void SaveGame()
-{
-    if (player == null) 
+    // 저장 함수 (자동 저장 후 이동 기능을 위해 onComplete 추가)
+    public void SaveGame(Action onComplete = null)
     {
-        Debug.LogError("저장 실패: Player 오브젝트가 연결되지 않았습니다.");
-        return;
-    }
-
-    Debug.Log("--- 게임 데이터 저장 시작 ---");
-    GameData data = new GameData();
-
-    // 1. 위치 정보 저장
-    data.position = new PositionData(
-        player.transform.position.x,
-        player.transform.position.y,
-        player.transform.position.z
-    );
-    data.lastScene = SceneManager.GetActiveScene().name;
-
-    // 2. PlayerStats 데이터 저장 (체력, 스태미너, 코인, 포션, **이동속도**)
-    if (playerStats != null)
-    {
-        data.maxHeart = (int)playerStats.MaxHealth;
-        data.currentHeart = (int)playerStats.CurrentHealth;
-
-        data.maxStamina = (int)playerStats.MaxStamina;
-        data.currentStamina = (int)playerStats.CurrentStamina;
-
-        data.coins = playerStats.CoinCount;
-        data.potionCount = playerStats.PotionCount;
-        
-        data.speed = (int)playerStats.MoveSpeed; 
-        
-        if(playerManager != null)
+        if (player == null) 
         {
-            data.baseAttack = playerManager.baseAttack;
-            data.baseAttackSpeed = playerManager.baseAttackSpeed;
-            data.attackRange = playerManager.attackRange;
-            data.equippedWeaponId = playerManager.equippedWeaponId;
+            Debug.LogError("저장 실패: Player 오브젝트가 연결되지 않았습니다.");
+            onComplete?.Invoke(); // 실패해도 다음 동작 진행을 위해 호출
+            return;
+        }
+
+        Debug.Log("--- 게임 데이터 저장 시작 ---");
+        GameData data = new GameData();
+
+        // 1. 위치 정보 저장
+        data.position = new PositionData(
+            player.transform.position.x,
+            player.transform.position.y,
+            player.transform.position.z
+        );
+        data.lastScene = SceneManager.GetActiveScene().name;
+
+        // 2. PlayerStats 데이터 저장
+        if (playerStats != null)
+        {
+            data.maxHeart = (int)playerStats.MaxHealth;
+            data.currentHeart = (int)playerStats.CurrentHealth;
+
+            data.maxStamina = (int)playerStats.MaxStamina;
+            data.currentStamina = (int)playerStats.CurrentStamina;
+
+            data.coins = playerStats.CoinCount;
+            data.potionCount = playerStats.PotionCount;
+            
+            data.speed = (int)playerStats.MoveSpeed; 
+            
+            if(playerManager != null)
+            {
+                data.baseAttack = playerManager.baseAttack;
+                data.baseAttackSpeed = playerManager.baseAttackSpeed;
+                data.attackRange = playerManager.attackRange;
+                data.equippedWeaponId = playerManager.equippedWeaponId;
+            }
+        }
+
+        // 3. 서버로 전송 (NetworkManager에게 onComplete 전달)
+        if (NetworkManager.Instance != null)
+        {
+            StartCoroutine(NetworkManager.Instance.SaveGameData(data, onComplete));
+        }
+        else
+        {
+            Debug.LogError("NetworkManager가 없습니다.");
+            onComplete?.Invoke();
         }
     }
-
-    // 3. 서버로 전송
-    StartCoroutine(NetworkManager.Instance.SaveGameData(data));
-}
 
     // 적용 (불러오기)
     public void ApplyGameData(GameData loadedData)
@@ -116,7 +126,6 @@ public void SaveGame()
         // 1. 아이템, 체력, 스테미너 적용
         if (playerStats != null)
         {
-
             playerStats.MaxHealth = loadedData.maxHeart;
             playerStats.CurrentHealth = loadedData.currentHeart;
             
@@ -154,6 +163,4 @@ public void SaveGame()
             );
         }
     }
-
-
 }

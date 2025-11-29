@@ -54,7 +54,7 @@ public class SettingsFunction : MonoBehaviour
         {
             case 0: scale = 0.8f; break; // 작게
             case 1: scale = 1.0f; break; // 보통
-            case 2: scale = 1.3f; break; // 크게
+            case 2: scale = 1.2f; break; // 크게
         }
 
         // 연결된 모든 컨트롤러 UI의 크기를 바꿈
@@ -65,31 +65,72 @@ public class SettingsFunction : MonoBehaviour
         }
     }
 
-    // 저장
+    // 저장 버튼 (수동 저장)
     void OnClickSave()
     {
         if (Manager.Instance != null)
         {
-            Debug.Log("[설정] 게임 저장 시도");
+            Debug.Log("[설정] 수동 저장 시도");
             Manager.Instance.SaveGame();
         }
     }
 
-    // 타이틀 화면으로
+    // 타이틀 화면으로 (자동 저장 기능 포함)
     void OnClickTitle()
     {
-        Time.timeScale = 1f; // 멈춘 시간 다시 흐르게 하기
-        SceneManager.LoadScene("StartScene"); // 씬 이름 확인 필수!
+        Debug.Log("타이틀 버튼 클릭: 자동 저장 후 이동합니다.");
+
+        // 1. 멈췄던 시간 다시 흐르게 하기 (중요!)
+        Time.timeScale = 1f; 
+
+        // 2. 매니저가 있으면 저장 후 이동, 없으면 그냥 이동
+        if (Manager.Instance != null)
+        {
+            // "저장이 완료되면 -> 씬을 이동시켜줘" 라고 부탁(Callback)합니다.
+            Manager.Instance.SaveGame(() => 
+            {
+                Debug.Log("저장 완료. StartScene으로 이동합니다.");
+                SceneManager.LoadScene("StartScene"); 
+            });
+        }
+        else
+        {
+            // 매니저가 없는 경우 (테스트 상황 등) 그냥 이동
+            SceneManager.LoadScene("StartScene"); 
+        }
     }
 
-    // 게임 종료
+    // 게임 종료 (자동 저장 기능 추가)
     void OnClickQuit()
     {
-        Debug.Log("게임 종료");
-        Application.Quit(); // 빌드된 게임에서만 작동함
+        Debug.Log("종료 버튼 클릭: 자동 저장 후 종료합니다.");
+
+        // 1. 멈춘 시간 다시 흐르게 하기 (안전장치)
+        Time.timeScale = 1f;
+
+        // 2. 매니저가 있으면 저장 후 종료
+        if (Manager.Instance != null)
+        {
+            Manager.Instance.SaveGame(() => 
+            {
+                Debug.Log("저장 완료. 게임을 종료합니다.");
+                QuitApplication(); // 저장 끝나면 진짜 종료
+            });
+        }
+        else
+        {
+            // 매니저 없으면 그냥 종료
+            QuitApplication();
+        }
+    }
+
+    // 실제 종료 기능을 하는 함수 (중복 코드를 줄이기 위해 분리함)
+    void QuitApplication()
+    {
+        Application.Quit(); // 빌드된 게임 종료
 
         #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // 에디터에서도 종료되게 함
+        UnityEditor.EditorApplication.isPlaying = false; // 에디터 종료
         #endif
     }
 }
